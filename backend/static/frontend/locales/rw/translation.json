@@ -772,5 +772,20 @@
   "description":"Hitamo ifatabuguzo rikunogeye",
   "no_plans_available":"Nta gahunda ibashije kuboneka",
   "no_plans_description":"Ntabwo bibashije kuboneka ubu"
+},
+
+"adminn":{
+  "feedback":{
+    "title":"Ibitekerezo by'abakiriya",
+    "subtitle":"Ibitekerezo",
+    "total":"Byose",
+    "avg_rating":"Igeraranya",
+    "five_star":"Inyenyeri 5",
+    "showing":"Rebwa",
+    "last_7_days":"Iminsi 7 ishize",
+    "filters":"Toranya",
+    "export_csv":"Sohora CSV",
+    "refresh":"tangira"
+  }
 }
 }
