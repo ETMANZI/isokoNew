@@ -917,5 +917,11 @@
   "copyright": "© {{year}} Market Hub. All rights reserved.",
   "privacy_policy": "Privacy Policy",
   "terms": "Terms"
+},
+"subscription":{
+  "title":"Subscription",
+  "description":"Select the prefered subscription",
+  "no_plans_available":"No Plan Available",
+  "no_plans_description":"No Plans Description"
 }
 }
