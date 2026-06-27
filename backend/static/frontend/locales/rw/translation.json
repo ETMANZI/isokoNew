@@ -106,7 +106,11 @@
   "safety_tip_2": "Hura ahantu hatekanye iyo urebye umutungo cyangwa imodoka.",
   "safety_tip_3": "Wirinde kohereza amafaranga mbere y'uko wemeza ko igurishwa ari ukuri.",
   "need_help": "Ukeneye Ubufasha?",
-  "support_text": "Ubufasha burahari mu gutangaza no gushyiraho konti"
+  "support_text": "Ubufasha burahari mu gutangaza no gushyiraho konti",
+  "give_feedback": "Tanga Igitekerezo",
+  "view_feedback": "Reba Igitekerezo",
+  "call_now": "Hamagara Ubu",
+  "whatsapp":"WhatsApp"
     },
 "login": {
   "welcome_back": "Murakaza neza",
