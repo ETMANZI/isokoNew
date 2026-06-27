@@ -69,7 +69,8 @@
     "no_image": "No Image",
     "previous": "Previous",
     "next": "Next",
-    "category": "Category"
+    "category": "Category",
+    "subscribe_to_post":"Subscribe to post"
   },
 
   "auth": {
