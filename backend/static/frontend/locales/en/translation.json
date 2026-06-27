@@ -109,7 +109,15 @@
   "give_feedback": "Give Feedback",
   "view_feedback": "View Feedback",
   "call_now": "Call Now",
-  "whatsapp":"whatsApp"
+  "whatsapp":"whatsApp",
+  
+  "user_guide": "User Guide",
+  "user_guide_text":"User guide text",
+  "read_guide": "Read the guide",
+  "report_text":"Report text",
+  "view_report": "View Report"
+
+
 },
 "login": {
   "welcome_back": "Welcome back",

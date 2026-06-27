@@ -110,7 +110,14 @@
   "give_feedback": "Tanga Igitekerezo",
   "view_feedback": "Reba Igitekerezo",
   "call_now": "Hamagara Ubu",
-  "whatsapp":"WhatsApp"
+  "whatsapp":"WhatsApp",
+  "user_guide": "Uburyo bwo Gukoresha",
+  "user_guide_text": "Uburyo buyobora",
+  "read_guide": "Soma Uburyo bwo Gukoresha",
+  "report_text":"Raporo",
+  "view_report": "Reba Raporo"
+
+
     },
 "login": {
   "welcome_back": "Murakaza neza",
