@@ -119,7 +119,7 @@
   "read_guide": "Read the guide",
   "reports":"Reports",
   "reports_text":"Activities Report",
-  "view_reports": "View Reporeportts"
+  "view_reports": "View Report"
 
 
 },
@@ -924,5 +924,18 @@
   "description":"Select the prefered subscription",
   "no_plans_available":"No Plan Available",
   "no_plans_description":"No Plans Description"
-}
-}
+},
+"adminn":{
+  "feedback":{
+    "title":"Users ' Feed back",
+    "subtitle":"Feedback",
+    "total":"Total",
+    "avg_rating":"Average Rating",
+    "five_star":"Five Star",
+    "showing":"Rebwa",
+    "last_7_days":"Last 7 Days",
+    "filters":"Filters",
+    "export_csv":"Export CSV",
+    "refresh":"refresh"
+  }
+},
