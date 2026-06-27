@@ -116,8 +116,9 @@
   "user_guide": "User Guide",
   "user_guide_text":"User guide text",
   "read_guide": "Read the guide",
-  "reports_text":"Report text",
-  "view_reports": "View Reports"
+  "reports":"Reports",
+  "reports_text":"Activities R",
+  "view_reports": "View Reporeportts"
 
 
 },
