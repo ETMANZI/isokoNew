@@ -765,5 +765,11 @@
   "copyright": "© {{year}} Market Hub. Uburenganzira bwose burakumwe.",
   "privacy_policy": "Politiki y'Ibanga",
   "terms": "Amategeko"
+},
+"subscription":{
+  "title":"Ifatabuguzi",
+  "description":"Hitamo ifatabuguzo rikunogeye",
+  "no_plans_available":"Nta gahunda ibashije kuboneka",
+  "no_plans_description":"Ntabwo bibashije kuboneka ubu"
 }
 }
