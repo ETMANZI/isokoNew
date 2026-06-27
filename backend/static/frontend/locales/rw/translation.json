@@ -109,13 +109,15 @@
   "support_text": "Ubufasha burahari mu gutangaza no gushyiraho konti",
   "give_feedback": "Tanga Igitekerezo",
   "view_feedback": "Reba Igitekerezo",
+  "feedback":"Igitekerezo",
+  "feedback_text":"Igitekerezo jambo",
   "call_now": "Hamagara Ubu",
   "whatsapp":"WhatsApp",
   "user_guide": "Uburyo bwo Gukoresha",
   "user_guide_text": "Uburyo buyobora",
   "read_guide": "Soma Uburyo bwo Gukoresha",
-  "report_text":"Raporo",
-  "view_report": "Reba Raporo"
+  "reports_text":"Raporo",
+  "view_reports": "Reba Raporo"
 
 
     },

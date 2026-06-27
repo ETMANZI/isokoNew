@@ -108,14 +108,16 @@
   "support_text": "Support available for posting and account setup",
   "give_feedback": "Give Feedback",
   "view_feedback": "View Feedback",
+  "feedback":" Feedback",
+  "feedback_text":"Feedback text",
   "call_now": "Call Now",
   "whatsapp":"whatsApp",
-  
+
   "user_guide": "User Guide",
   "user_guide_text":"User guide text",
   "read_guide": "Read the guide",
-  "report_text":"Report text",
-  "view_report": "View Report"
+  "reports_text":"Report text",
+  "view_reports": "View Reports"
 
 
 },
