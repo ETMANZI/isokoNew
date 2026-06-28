@@ -938,6 +938,117 @@
     "export_csv":"Export CSV",
     "refresh":"refresh"
   }
-}
+},
+
+  "guide": {
+    "title": "User Guide",
+    "subtitle": "Everything you need to know about using Market Hub",
+    "search_placeholder": "Search guide...",
+    
+    "getting_started": {
+      "title": "Getting Started",
+      "welcome": "Welcome to Market Hub!",
+      "description": "Market Hub is Rwanda's premier marketplace app. This guide will help you get started quickly.",
+      "account_creation": "Account Creation",
+      "step1": "Download the app from Google Play Store",
+      "step2": "Tap 'Sign Up' and enter your phone number",
+      "step3": "Verify your phone number with the OTP sent via SMS",
+      "step4": "Complete your profile with name and optional details"
+    },
+    
+    "posting_listing": {
+      "title": "Posting a Listing",
+      "description": "Learn how to create and publish listings to reach thousands of buyers in Rwanda.",
+      "image_guidelines": "Image Guidelines",
+      "image_tip1": "Use clear, well-lit photos",
+      "image_tip2": "Show the product from multiple angles",
+      "image_tip3": "Maximum 4 images per listing (depending on plan)",
+      "listing_tips": "Listing Tips",
+      "tip1": "Write a descriptive title that attracts buyers",
+      "tip2": "Set a competitive price based on market research",
+      "tip3": "Provide a detailed description with features and condition"
+    },
+    
+    "subscriptions": {
+      "title": "Subscription Plans",
+      "description": "Choose the plan that best fits your selling needs. Upgrade anytime to unlock more features.",
+      "basic": "Basic",
+      "basic_desc": "For occasional sellers",
+      "classic": "Classic",
+      "classic_desc": "For regular sellers",
+      "premium": "Premium",
+      "premium_desc": "For professional sellers",
+      "business": "Business",
+      "business_desc": "For businesses and enterprises",
+      "listings": "Listings",
+      "images": "Images per listing",
+      "business_ads": "Business ads",
+      "analytics": "Advanced analytics",
+      "priority_support": "Priority support"
+    },
+    
+    "dashboard": {
+      "title": "Dashboard Overview",
+      "description": "Your command center for managing all your marketplace activities.",
+      "manage_listings": "Manage Listings",
+      "manage_listings_desc": "Edit, deactivate or delete your listings",
+      "analytics": "View Analytics",
+      "analytics_desc": "Track views and engagement on your listings",
+      "notifications": "Notifications",
+      "notifications_desc": "Stay updated with important alerts",
+      "messages": "Messages",
+      "messages_desc": "Communicate with potential buyers"
+    },
+    
+    "safety": {
+      "title": "Safety & Security",
+      "safety_tips": "Safety Tips",
+      "tip1": "Always meet in public places like markets or shopping centers",
+      "tip2": "Never share your PIN, password, or banking details",
+      "tip3": "Verify the product thoroughly before making payment",
+      "tip4": "Use in-app messaging for all communications",
+      "scam_warning": "⚠️ Scam Warning",
+      "scam_message": "Be cautious of deals that seem too good to be true. Report suspicious activity immediately to our support team."
+    },
+    
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": "How do I reset my password?",
+      "a1": "Go to Settings → Account → Change Password. You'll receive an OTP to verify your identity.",
+      "q2": "How long does it take for a listing to appear?",
+      "a2": "Listings appear immediately after publishing and payment confirmation.",
+      "q3": "Can I cancel my subscription?",
+      "a3": "Yes, you can cancel anytime from Settings → Subscriptions. Your plan remains active until the current period ends.",
+      "q4": "How do I contact a seller?",
+      "a4": "Use the chat button on any listing to start a conversation with the seller.",
+      "q5": "What payment methods are accepted?",
+      "a5": "We accept MTN Mobile Money, Airtel Money, and Bank Transfer. All payments are secure."
+    },
+    
+    "actions": {
+      "need_help": "Need Help?",
+      "call_now": "Call Now",
+      "whatsapp": "Contact on WhatsApp",
+      "print_guide": "Print Guide",
+      "download_pdf": "Download PDF"
+    },
+    
+    "feedback": {
+      "text": "Did we miss something?",
+      "link": "Send us feedback"
+    },
+    
+    "screenshot": {
+      "placeholder": "Screenshot Placeholder",
+      "registration_hint": "Registration form screenshot will appear here",
+      "publish_hint": "Publish listing form screenshot will appear here",
+      "subscription_hint": "Subscription plans screenshot will appear here"
+    },
+    
+    "footer": "This guide is for informational purposes only. Prices and features subject to change."
+  }
+
+
+
 
 }

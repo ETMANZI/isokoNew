@@ -787,5 +787,118 @@
     "export_csv":"Sohora CSV",
     "refresh":"tangira"
   }
-}
+},
+
+
+  "guide": {
+    "title": "Ubugororangingo",
+    "subtitle": "Ibyose ugomba kumenya kuri Market Hub",
+    "search_placeholder": "Shakisha mu bugororangingo...",
+    
+    "getting_started": {
+      "title": "Kwinjira",
+      "welcome": "Murakaza neza kuri Market Hub!",
+      "description": "Market Hub ni porogaramu ikomeye yo kugurisha no kugura mu Rwanda. Ubu bugororangingo buragufasha gutangira byihuse.",
+      "account_creation": "Kurema Konti",
+      "step1": "Pakira porogaramu muri Google Play Store",
+      "step2": "Kanda 'Kwiyandikisha' hanyuma ujye ubika numero yawe ya telefoni",
+      "step3": "Umeze numero yawe ukoresheje OTP yoherejwe na SMS",
+      "step4": "Uzuzuze ibiranga konti yawe n'izina n'andi makuru"
+    },
+    
+    "posting_listing": {
+      "title": "Gushyira ibigurishwa",
+      "description": "Jya wiga uburyo bwo kurema no gushyira ibigurishwa kugira ngo ugerageze abagura ibihumbi mu Rwanda.",
+      "image_guidelines": "Amabwiriza y'Amashusho",
+      "image_tip1": "Koresha amashusho meza, yumurika neza",
+      "image_tip2": "Erekana ibicuruzwa mu nzira zitandukanye",
+      "image_tip3": "Amashusho angana na 4 kuri buri kigurishwa (biterwa na gahunda yawe)",
+      "listing_tips": "Inama zo Gushyira ibigurishwa",
+      "tip1": "Andika umutwe usobanutse neza ushishikiza abagura",
+      "tip2": "Shiraho igiciro gihwanye n'isoko",
+      "tip3": "Tangira ibisobanuro birambuye birimo ibiranga n'uburyo bwayo"
+    },
+    
+    "subscriptions": {
+      "title": "Gahunda zo kwiyandikisha",
+      "description": "Hitamo gahunda ikwiye ibyo ugurisha. Ubasha kuyijyana hejuru igihe icyo aricyo cyose kugira ngo ubone ibindi biranga.",
+      "basic": "Shingiro",
+      "basic_desc": "Kubagurisha gake",
+      "classic": "Kera",
+      "classic_desc": "Kubagurisha buri gihe",
+      "premium": "Premium",
+      "premium_desc": "Kubagurisha babigize umwuga",
+      "business": "Ubucuruzi",
+      "business_desc": "Kubucuruzi n'ibigo",
+      "listings": "Ibigurishwa",
+      "images": "Amashusho kuri buri kigurishwa",
+      "business_ads": "Amatangazo y'ubucuruzi",
+      "analytics": "Ibisobanuro birambuye",
+      "priority_support": "Ubufasha bwihutirwa"
+    },
+    
+    "dashboard": {
+      "title": "Ikiganiro cy'Ubuyobozi",
+      "description": "Ahantu ushinjira ibikorwa byawe byose byo kugurisha no kugura.",
+      "manage_listings": "Gucunga ibigurishwa",
+      "manage_listings_desc": "Hindura, hagarika cyangwa siba ibigurishwa byawe",
+      "analytics": "Reba ibisobanuro",
+      "analytics_desc": "Reba uko ibigurishwa byawe biburwa n'abantu",
+      "notifications": "Imenyesha",
+      "notifications_desc": "Menya amakuru y'ingenzi",
+      "messages": "Ubutumwa",
+      "messages_desc": "Bwirana nabagura bashobora kuba"
+    },
+    
+    "safety": {
+      "title": "Umutekano",
+      "safety_tips": "Inama z'umutekano",
+      "tip1": "Burigihe murane mu bantu benshi nko mu masoko cyangwa mu bubiko",
+      "tip2": "Ntugire n'umuntu ugaragaza PIN, ijambobanga, cyangwa amakuru y'akonti yawe",
+      "tip3": "Iyemeze ibicuruzwa neza mbere yo kwishyura",
+      "tip4": "Koresha ubutumwa bwo muri porogaramu kugira ngo ubwirane",
+      "scam_warning": "⚠️ Umuburo ku By'ikinyoma",
+      "scam_message": "Witondere ibintu bisa nk'ibyiza cyane. Menyisha itsinda ry'ubufasha iyo hari ikintu kidasanzwe."
+    },
+    
+    "faq": {
+      "title": "Ibibazo bikunze kubazwa",
+      "q1": "Nigute nshobora guhindura ijambobanga?",
+      "a1": "Jya ku Ibikoresho → Konti → Hindura Ijambobanga. Uzahabwa OTP yo kwemeza.",
+      "q2": "Ni akaryarya Koko ibigurishwa bigaragara?",
+      "a2": "Ibigurishwa bigaragara ako kanya nyuma yo gushyira no kwemeza kwishyura.",
+      "q3": "Nshobora guhagarika kwegera?",
+      "a3": "Yego, ubasha guhagarika igihe icyo aricyo cyose ukoresheje Ibikoresho → Kwegera. Gahunda yawe ikomeza gukora kugeza igihe ikaze.",
+      "q4": "Nigute nshobora kuvugana n'uwagurisha?",
+      "a4": "Koresha akabuto ko kuvugana kuri buri kigurishwa kugira ngo utangire ikiganiro.",
+      "q5": "Ni ubuhe buryo bwo kwishyura bwemerwa?",
+      "a5": "Twemera MTN Mobile Money, Airtel Money, na Bank Transfer. Kwishyura kwose ni umutekano."
+    },
+    
+    "actions": {
+      "need_help": "Ukeneye Ubufasha?",
+      "call_now": "Tubone kuri Telefone",
+      "whatsapp": "Tubone kuri WhatsApp",
+      "print_guide": "Capa Ubugororangingo",
+      "download_pdf": "Paka PDF"
+    },
+    
+    "feedback": {
+      "text": "Hari ikintu twibagiwe?",
+      "link": "Tumenyeshe ibyo wibwira"
+    },
+    
+    "screenshot": {
+      "placeholder": "Aho amashusho azagaragara",
+      "registration_hint": "Amashusho yo kwiyandikisha azagaragara hano",
+      "publish_hint": "Amashusho yo gushyira ibigurishwa azagaragara hano",
+      "subscription_hint": "Amashusho ya gahunda zo kwiyandikisha azagaragara hano"
+    },
+    
+    "footer": "Ubu bugororangingo ni ubw'amakuru gusa. Ibiciro n'ibiranga bishobora guhinduka."
+  }
+
+
+
+
 }
