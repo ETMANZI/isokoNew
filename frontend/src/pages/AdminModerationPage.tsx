@@ -402,12 +402,14 @@ export default function AdminModerationPage() {
   const [dailyBreakdownPage, setDailyBreakdownPage] = useState(1);
   const [monthlyPerformancePage, setMonthlyPerformancePage] = useState(1);
 
+  // Subscription pagination state
+  const [subscriptionPage, setSubscriptionPage] = useState(1);
+  const subscriptionPageSize = 10;
 
   const [subscriptionRejectingId, setSubscriptionRejectingId] = useState<number | null>(null);
   const [subscriptionRejectReason, setSubscriptionRejectReason] = useState("");
   const [subscriptionActionError, setSubscriptionActionError] = useState("");
   const [subscriptionActionSuccess, setSubscriptionActionSuccess] = useState("");
-
 
   const RECENT_DAILY_PER_PAGE = 7;
   const DAILY_BREAKDOWN_PER_PAGE = 10;
@@ -478,8 +480,6 @@ export default function AdminModerationPage() {
     },
   });
 
-
-
   const { data: subscriptionRequests = [], isLoading: isLoadingSubscriptionRequests } = useQuery<AdminSubscriptionRequest[]>({
     queryKey: ["admin-subscription-requests"],
     queryFn: async () => {
@@ -498,9 +498,18 @@ export default function AdminModerationPage() {
     enabled: activeTab === "subscriptions",
   });
 
+  // Pagination logic for subscription requests
+  const paginatedRequests = useMemo(() => {
+    const start = (subscriptionPage - 1) * subscriptionPageSize;
+    const end = start + subscriptionPageSize;
+    return subscriptionRequests.slice(start, end);
+  }, [subscriptionRequests, subscriptionPage, subscriptionPageSize]);
 
+  const totalSubscriptionPages = Math.ceil(subscriptionRequests.length / subscriptionPageSize);
 
-
+  useEffect(() => {
+    setSubscriptionPage(1);
+  }, [subscriptionRequests.length]);
 
   const rejectMutation = useMutation({
     mutationFn: async ({
@@ -633,8 +642,6 @@ export default function AdminModerationPage() {
     },
   });
 
-
-
   const approveSubscriptionMutation = useMutation({
     mutationFn: async (subscriptionId: number) => {
       await api.post(`/subscriptions/admin/requests/${subscriptionId}/approve/`);
@@ -672,10 +679,6 @@ export default function AdminModerationPage() {
       );
     },
   });
-
-
-
-
 
   const togglePartnerStatusMutation = useMutation({
     mutationFn: async (partner: Partner) => {
@@ -1288,292 +1291,62 @@ export default function AdminModerationPage() {
             ))}
           </div>
 
-
-
-{activeTab === "moderation" && (
-  <>
-    <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <h2 className="text-2xl font-semibold text-slate-900">
-          {t("admin.moderation_queue")}
-        </h2>
-        <p className="text-sm text-slate-500">
-          Review submitted listings, inspect owner details, and approve or reject quickly.
-        </p>
-      </div>
-
-      {!isLoadingModeration && moderationData.length > 0 && (
-        <div className="inline-flex w-fit items-center rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm">
-          {moderationData.length} pending
-        </div>
-      )}
-    </div>
-
-    {isLoadingModeration ? (
-      <div className="grid gap-4">
-        {[...Array(3)].map((_, index) => (
-          <Card key={index}>
-            <div className="animate-pulse">
-              <div className="flex flex-col gap-5 lg:flex-row">
-                <div className="h-52 w-full rounded-3xl bg-slate-200 lg:w-[250px]" />
-                <div className="flex-1 space-y-3">
-                  <div className="h-6 w-1/2 rounded bg-slate-200" />
-                  <div className="h-4 w-1/3 rounded bg-slate-200" />
-                  <div className="h-8 w-40 rounded bg-slate-200" />
-                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                    <div className="h-20 rounded-2xl bg-slate-200" />
-                    <div className="h-20 rounded-2xl bg-slate-200" />
-                    <div className="h-20 rounded-2xl bg-slate-200" />
-                  </div>
-                  <div className="h-24 rounded-2xl bg-slate-200" />
-                </div>
-                <div className="flex w-full gap-3 lg:w-[180px] lg:flex-col">
-                  <div className="h-11 flex-1 rounded-2xl bg-slate-200" />
-                  <div className="h-11 flex-1 rounded-2xl bg-slate-200" />
-                </div>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
-    ) : moderationData.length === 0 ? (
-      <Card>
-        <div className="py-12 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-2xl">
-            ✅
-          </div>
-          <h2 className="text-xl font-semibold text-slate-900">
-            {t("admin.no_pending_listings")}
-          </h2>
-          <p className="mt-2 text-slate-600">{t("admin.up_to_date")}.</p>
-        </div>
-      </Card>
-    ) : (
-      <div className="space-y-5">
-        {moderationData.map((item) => {
-          const coverImage =
-            item.images?.find((img) => img.is_cover)?.image ||
-            item.images?.[0]?.image ||
-            "";
-
-          const isRejectingThis = rejectingId === item.id;
-
-          const whatsappNumber = item.contact_phone
-            ? item.contact_phone.replace(/[^\d]/g, "")
-            : "";
-
-          return (
-            <Card key={item.id}>
-              <div className="flex flex-col gap-5 lg:flex-row">
-                {/* IMAGE */}
-                <div className="relative w-full shrink-0 lg:w-[250px]">
-                  <div className="overflow-hidden rounded-3xl bg-slate-100">
-                    {coverImage ? (
-                      <img
-                        src={coverImage}
-                        alt={item.title}
-                        className="h-52 w-full object-cover transition duration-300 hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-52 items-center justify-center text-sm text-slate-500">
-                        {t("admin.no_image")}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-                    <span className="rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200">
-                      {item.listing_type}
-                    </span>
-                    <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 shadow-sm ring-1 ring-amber-200">
-                      Pending Review
-                    </span>
-                  </div>
-                </div>
-
-                {/* CONTENT */}
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="min-w-0">
-                      <h2 className="truncate text-xl font-bold text-slate-900">
-                        {item.title}
-                      </h2>
-                      <p className="mt-1 text-sm text-slate-500">
-                        {item.district || t("admin.na")} • {item.sector || t("admin.na")}
-                      </p>
-                    </div>
-
-                    <div className="shrink-0">
-                      <div className="inline-flex rounded-2xl bg-indigo-50 px-4 py-2 text-lg font-bold text-indigo-700 ring-1 ring-indigo-100">
-                        RWF {formatPrice(item.price)}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* INFO BOXES */}
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                    {item.owner_email && (
-                      <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                          Owner Email
-                        </p>
-                        <p className="mt-1 truncate text-sm font-medium text-slate-700">
-                          {item.owner_email}
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                        Phone Number
-                      </p>
-                      <p className="mt-1 text-sm font-medium text-slate-700">
-                        {item.contact_phone || t("admin.na")}
-                      </p>
-                    </div>
-
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                        Location
-                      </p>
-                      <p className="mt-1 text-sm font-medium text-slate-700">
-                        {item.district || t("admin.na")} / {item.sector || t("admin.na")}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* DESCRIPTION */}
-                  {item.description && (
-                    <div className="mt-4 rounded-2xl border border-slate-200 bg-white px-4 py-4">
-                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
-                        Description
-                      </p>
-                      <p className="line-clamp-3 text-sm leading-6 text-slate-600">
-                        {item.description}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* QUICK ACTIONS */}
-                  <div className="mt-4 flex flex-wrap gap-3">
-                    <a
-                      href={`/listings/${item.id}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-                    >
-                      View Details
-                    </a>
-
-                    {item.contact_phone && (
-                      <a
-                        href={`tel:${item.contact_phone}`}
-                        className="inline-flex items-center rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-100"
-                      >
-                        Call Owner
-                      </a>
-                    )}
-
-                    {whatsappNumber && (
-                      <a
-                        href={`https://wa.me/${whatsappNumber}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center rounded-2xl border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700 transition hover:bg-green-100"
-                      >
-                        WhatsApp
-                      </a>
-                    )}
-                  </div>
-
-                  {/* REJECT PANEL */}
-                  {isRejectingThis && (
-                    <div className="mt-5 rounded-3xl border border-red-100 bg-red-50/60 p-4">
-                      <label className="mb-2 block text-sm font-semibold text-slate-700">
-                        {t("admin.reject_reason")}
-                      </label>
-
-                      <textarea
-                        value={rejectReason}
-                        onChange={(e) => setRejectReason(e.target.value)}
-                        placeholder={t("admin.reject_placeholder")}
-                        className="min-h-28 w-full rounded-2xl border border-slate-300 bg-white p-3 text-sm outline-none focus:border-red-400"
-                      />
-
-                      <div className="mt-4 flex flex-wrap gap-3">
-                        <Button
-                          className="bg-red-600"
-                          onClick={submitReject}
-                          disabled={rejectMutation.isPending}
-                        >
-                          {rejectMutation.isPending
-                            ? t("admin.rejecting")
-                            : t("admin.confirm_reject")}
-                        </Button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setRejectingId(null);
-                            setRejectReason("");
-                          }}
-                          className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
-                        >
-                          {t("admin.cancel")}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* ACTIONS */}
-                <div className="flex w-full shrink-0 flex-row gap-3 lg:w-[180px] lg:flex-col">
-                  <Button
-                    className="flex-1 bg-green-600"
-                    onClick={() => approveMutation.mutate(item.id)}
-                    disabled={approveMutation.isPending}
-                  >
-                    {approveMutation.isPending
-                      ? t("admin.approving")
-                      : t("admin.approve")}
-                  </Button>
-
-                  {!isRejectingThis && (
-                    <Button
-                      className="flex-1 bg-red-600"
-                      onClick={() => startReject(item.id)}
-                    >
-                      {t("admin.reject")}
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-    )}
-  </>
-)}
-
-
-
-
-
-
-
-
-
-          {/* {activeTab === "moderation" && (
+          {/* Moderation Tab */}
+          {activeTab === "moderation" && (
             <>
-              <h2 className="mb-6 text-2xl font-semibold text-slate-900">{t("admin.moderation_queue")}</h2>
+              <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 className="text-2xl font-semibold text-slate-900">
+                    {t("admin.moderation_queue")}
+                  </h2>
+                  <p className="text-sm text-slate-500">
+                    Review submitted listings, inspect owner details, and approve or reject quickly.
+                  </p>
+                </div>
+
+                {!isLoadingModeration && moderationData.length > 0 && (
+                  <div className="inline-flex w-fit items-center rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm">
+                    {moderationData.length} pending
+                  </div>
+                )}
+              </div>
 
               {isLoadingModeration ? (
-                <p className="text-slate-600">{t("admin.loading")}</p>
+                <div className="grid gap-4">
+                  {[...Array(3)].map((_, index) => (
+                    <Card key={index}>
+                      <div className="animate-pulse">
+                        <div className="flex flex-col gap-5 lg:flex-row">
+                          <div className="h-52 w-full rounded-3xl bg-slate-200 lg:w-[250px]" />
+                          <div className="flex-1 space-y-3">
+                            <div className="h-6 w-1/2 rounded bg-slate-200" />
+                            <div className="h-4 w-1/3 rounded bg-slate-200" />
+                            <div className="h-8 w-40 rounded bg-slate-200" />
+                            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                              <div className="h-20 rounded-2xl bg-slate-200" />
+                              <div className="h-20 rounded-2xl bg-slate-200" />
+                              <div className="h-20 rounded-2xl bg-slate-200" />
+                            </div>
+                            <div className="h-24 rounded-2xl bg-slate-200" />
+                          </div>
+                          <div className="flex w-full gap-3 lg:w-[180px] lg:flex-col">
+                            <div className="h-11 flex-1 rounded-2xl bg-slate-200" />
+                            <div className="h-11 flex-1 rounded-2xl bg-slate-200" />
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
               ) : moderationData.length === 0 ? (
                 <Card>
-                  <div className="py-10 text-center">
-                    <h2 className="text-xl font-semibold text-slate-900">{t("admin.no_pending_listings")}</h2>
+                  <div className="py-12 text-center">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-2xl">
+                      ✅
+                    </div>
+                    <h2 className="text-xl font-semibold text-slate-900">
+                      {t("admin.no_pending_listings")}
+                    </h2>
                     <p className="mt-2 text-slate-600">{t("admin.up_to_date")}.</p>
                   </div>
                 </Card>
@@ -1587,47 +1360,138 @@ export default function AdminModerationPage() {
 
                     const isRejectingThis = rejectingId === item.id;
 
+                    const whatsappNumber = item.contact_phone
+                      ? item.contact_phone.replace(/[^\d]/g, "")
+                      : "";
+
                     return (
                       <Card key={item.id}>
-                        <div className="grid gap-4 md:grid-cols-[180px_1fr_auto] md:items-start">
-                          <div className="overflow-hidden rounded-2xl bg-slate-100">
-                            {coverImage ? (
-                              <img
-                                src={coverImage}
-                                alt={item.title}
-                                className="h-36 w-full object-cover"
-                              />
-                            ) : (
-                              <div className="flex h-36 items-center justify-center text-sm text-slate-500">
-                                {t("admin.no_image")}
-                              </div>
-                            )}
+                        <div className="flex flex-col gap-5 lg:flex-row">
+                          {/* IMAGE */}
+                          <div className="relative w-full shrink-0 lg:w-[250px]">
+                            <div className="overflow-hidden rounded-3xl bg-slate-100">
+                              {coverImage ? (
+                                <img
+                                  src={coverImage}
+                                  alt={item.title}
+                                  className="h-52 w-full object-cover transition duration-300 hover:scale-105"
+                                />
+                              ) : (
+                                <div className="flex h-52 items-center justify-center text-sm text-slate-500">
+                                  {t("admin.no_image")}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="absolute left-3 top-3 flex flex-wrap gap-2">
+                              <span className="rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200">
+                                {item.listing_type}
+                              </span>
+                              <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 shadow-sm ring-1 ring-amber-200">
+                                Pending Review
+                              </span>
+                            </div>
                           </div>
 
-                          <div>
-                            <h2 className="text-lg font-semibold text-slate-900">{item.title}</h2>
+                          {/* CONTENT */}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                              <div className="min-w-0">
+                                <h2 className="truncate text-xl font-bold text-slate-900">
+                                  {item.title}
+                                </h2>
+                                <p className="mt-1 text-sm text-slate-500">
+                                  {item.district || t("admin.na")} • {item.sector || t("admin.na")}
+                                </p>
+                              </div>
 
-                            <p className="mt-1 text-sm text-slate-500">
-                              {item.listing_type} • {item.district || t("admin.na")} • {item.sector || t("admin.na")}
-                            </p>
+                              <div className="shrink-0">
+                                <div className="inline-flex rounded-2xl bg-indigo-50 px-4 py-2 text-lg font-bold text-indigo-700 ring-1 ring-indigo-100">
+                                  RWF {formatPrice(item.price)}
+                                </div>
+                              </div>
+                            </div>
 
-                            <p className="mt-2 text-base font-semibold text-slate-900">
-                              RWF {formatPrice(item.price)}
-                            </p>
+                            {/* INFO BOXES */}
+                            <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                              {item.owner_email && (
+                                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                    Owner Email
+                                  </p>
+                                  <p className="mt-1 truncate text-sm font-medium text-slate-700">
+                                    {item.owner_email}
+                                  </p>
+                                </div>
+                              )}
 
-                            {item.owner_email && (
-                              <p className="mt-2 text-sm text-slate-600">Owner: {item.owner_email}</p>
-                            )}
+                              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                  Phone Number
+                                </p>
+                                <p className="mt-1 text-sm font-medium text-slate-700">
+                                  {item.contact_phone || t("admin.na")}
+                                </p>
+                              </div>
 
+                              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                  Location
+                                </p>
+                                <p className="mt-1 text-sm font-medium text-slate-700">
+                                  {item.district || t("admin.na")} / {item.sector || t("admin.na")}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* DESCRIPTION */}
                             {item.description && (
-                              <p className="mt-3 line-clamp-3 text-sm text-slate-600">
-                                {item.description}
-                              </p>
+                              <div className="mt-4 rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                  Description
+                                </p>
+                                <p className="line-clamp-3 text-sm leading-6 text-slate-600">
+                                  {item.description}
+                                </p>
+                              </div>
                             )}
 
+                            {/* QUICK ACTIONS */}
+                            <div className="mt-4 flex flex-wrap gap-3">
+                              <a
+                                href={`/listings/${item.id}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                              >
+                                View Details
+                              </a>
+
+                              {item.contact_phone && (
+                                <a
+                                  href={`tel:${item.contact_phone}`}
+                                  className="inline-flex items-center rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-100"
+                                >
+                                  Call Owner
+                                </a>
+                              )}
+
+                              {whatsappNumber && (
+                                <a
+                                  href={`https://wa.me/${whatsappNumber}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center rounded-2xl border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700 transition hover:bg-green-100"
+                                >
+                                  WhatsApp
+                                </a>
+                              )}
+                            </div>
+
+                            {/* REJECT PANEL */}
                             {isRejectingThis && (
-                              <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                              <div className="mt-5 rounded-3xl border border-red-100 bg-red-50/60 p-4">
+                                <label className="mb-2 block text-sm font-semibold text-slate-700">
                                   {t("admin.reject_reason")}
                                 </label>
 
@@ -1635,16 +1499,18 @@ export default function AdminModerationPage() {
                                   value={rejectReason}
                                   onChange={(e) => setRejectReason(e.target.value)}
                                   placeholder={t("admin.reject_placeholder")}
-                                  className="min-h-24 w-full rounded-2xl border border-slate-300 bg-white p-3 outline-none focus:border-slate-700"
+                                  className="min-h-28 w-full rounded-2xl border border-slate-300 bg-white p-3 text-sm outline-none focus:border-red-400"
                                 />
 
-                                <div className="mt-3 flex flex-wrap gap-3">
+                                <div className="mt-4 flex flex-wrap gap-3">
                                   <Button
                                     className="bg-red-600"
                                     onClick={submitReject}
                                     disabled={rejectMutation.isPending}
                                   >
-                                    {rejectMutation.isPending ? t("admin.rejecting") : t("admin.confirm_reject")}
+                                    {rejectMutation.isPending
+                                      ? t("admin.rejecting")
+                                      : t("admin.confirm_reject")}
                                   </Button>
 
                                   <button
@@ -1653,7 +1519,7 @@ export default function AdminModerationPage() {
                                       setRejectingId(null);
                                       setRejectReason("");
                                     }}
-                                    className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                                    className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
                                   >
                                     {t("admin.cancel")}
                                   </button>
@@ -1662,17 +1528,23 @@ export default function AdminModerationPage() {
                             )}
                           </div>
 
-                          <div className="flex flex-col gap-3">
+                          {/* ACTIONS */}
+                          <div className="flex w-full shrink-0 flex-row gap-3 lg:w-[180px] lg:flex-col">
                             <Button
-                              className="bg-green-600"
+                              className="flex-1 bg-green-600"
                               onClick={() => approveMutation.mutate(item.id)}
                               disabled={approveMutation.isPending}
                             >
-                              {approveMutation.isPending ? t("admin.approving") : t("admin.approve")}
+                              {approveMutation.isPending
+                                ? t("admin.approving")
+                                : t("admin.approve")}
                             </Button>
 
                             {!isRejectingThis && (
-                              <Button className="bg-red-600" onClick={() => startReject(item.id)}>
+                              <Button
+                                className="flex-1 bg-red-600"
+                                onClick={() => startReject(item.id)}
+                              >
                                 {t("admin.reject")}
                               </Button>
                             )}
@@ -1684,19 +1556,15 @@ export default function AdminModerationPage() {
                 </div>
               )}
             </>
-          )} */}
+          )}
 
-
-
-
-
+          {/* Categories Tab */}
           {activeTab === "categories" && (
             <>
               <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <h2 className="text-2xl font-semibold text-slate-900">{t("admin.categories_title")}</h2>
                   <p className="mt-1 text-sm text-slate-600">
-                    {/* Manage main categories and subcategories with a cleaner admin view. */}
                     {t("admin.categories_description")}
                   </p>
                 </div>
@@ -1915,6 +1783,7 @@ export default function AdminModerationPage() {
             </>
           )}
 
+          {/* Visitor Stats Tab */}
           {activeTab === "visitor_stats" && (
             <>
               <div className="mb-6">
@@ -2165,6 +2034,7 @@ export default function AdminModerationPage() {
             </>
           )}
 
+          {/* Partners Tab */}
           {activeTab === "partners" && (
             <>
               <div className="mb-6">
@@ -2380,6 +2250,7 @@ export default function AdminModerationPage() {
             </>
           )}
 
+          {/* Video Banners Tab */}
           {activeTab === "video_banners" && (
             <>
               <div className="mb-6">
@@ -2591,6 +2462,7 @@ export default function AdminModerationPage() {
             </>
           )}
 
+          {/* Admin Users Tab */}
           {activeTab === "admin_users" && (
             <>
               <div className="mb-6">
@@ -2827,6 +2699,7 @@ export default function AdminModerationPage() {
             </>
           )}
 
+          {/* Non-Admin Users Tab */}
           {activeTab === "non_admin_users" && (
             <>
               <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -2951,378 +2824,423 @@ export default function AdminModerationPage() {
             </>
           )}
 
+          {/* Subscriptions Tab */}
+          {activeTab === "subscriptions" && (
+            <>
+              <div className="mb-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-2xl font-semibold text-slate-900">Subscription Requests</h2>
+                    <p className="mt-1 text-sm text-slate-600">
+                      Review subscription requests, approve or reject them, and monitor payment history.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-500">
+                    <span className="rounded-full bg-slate-100 px-3 py-1 font-medium">
+                      {subscriptionRequests.length} requests
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-{activeTab === "subscriptions" && (
-  <>
-    <div className="mb-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="text-2xl font-semibold text-slate-900">Subscription Requests</h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Review subscription requests, approve or reject them, and monitor payment history.
-          </p>
-        </div>
-        <div className="flex items-center gap-2 text-sm text-slate-500">
-          <span className="rounded-full bg-slate-100 px-3 py-1 font-medium">
-            {subscriptionRequests.length} requests
-          </span>
-        </div>
-      </div>
-    </div>
+              {subscriptionActionError && (
+                <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {subscriptionActionError}
+                </div>
+              )}
 
-    {subscriptionActionError && (
-      <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-        {subscriptionActionError}
-      </div>
-    )}
+              {subscriptionActionSuccess && (
+                <div className="mb-4 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                  {subscriptionActionSuccess}
+                </div>
+              )}
 
-    {subscriptionActionSuccess && (
-      <div className="mb-4 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-        {subscriptionActionSuccess}
-      </div>
-    )}
-
-    {isLoadingSubscriptionRequests ? (
-      <div className="space-y-3">
-        {[...Array(3)].map((_, i) => (
-          <Card key={i} className="p-4 animate-pulse">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="h-6 w-32 rounded bg-slate-200" />
-              <div className="h-6 w-20 rounded bg-slate-200" />
-            </div>
-            <div className="mt-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-              {[...Array(6)].map((_, j) => (
-                <div key={j} className="h-12 rounded-lg bg-slate-200" />
-              ))}
-            </div>
-          </Card>
-        ))}
-      </div>
-    ) : subscriptionRequests.length === 0 ? (
-      <Card>
-        <div className="py-12 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-3xl">
-            📭
-          </div>
-          <h3 className="text-xl font-semibold text-slate-900">No subscription requests found</h3>
-          <p className="mt-2 text-slate-600">All requests will appear here once users subscribe.</p>
-        </div>
-      </Card>
-    ) : (
-      <>
-        {/* Compact Request List */}
-        <div className="space-y-3">
-          {subscriptionRequests.map((item) => {
-            const isRejectingThis = subscriptionRejectingId === item.id;
-            const whatsappNumber = item.user_phone
-              ? item.user_phone.replace(/[^\d]/g, "")
-              : "";
-
-            return (
-              <Card key={item.id} className="p-4 hover:shadow-md transition-shadow">
-                <div className="flex flex-col gap-3">
-                  {/* Row 1: User + Plan + Status + Actions */}
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    {/* User Info - WITH PHONE NUMBER */}
-                    <div className="min-w-0">
-                      <p className="font-semibold text-slate-900 truncate">
-                        {item.user_name || item.user_email}
-                      </p>
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
-                        {/* Phone - Displayed prominently first */}
-                        {item.user_phone ? (
-                          <span className="flex items-center gap-1 font-medium text-slate-700">
-                            📞 {item.user_phone}
-                            <span className="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">
-                              Reg
-                            </span>
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1 text-slate-400">
-                            📞 No phone
-                          </span>
-                        )}
-                        {/* Email */}
-                        <span className="flex items-center gap-1">
-                          ✉️ {item.user_email}
-                        </span>
+              {isLoadingSubscriptionRequests ? (
+                <div className="space-y-3">
+                  {[...Array(3)].map((_, i) => (
+                    <Card key={i} className="p-4 animate-pulse">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="h-6 w-32 rounded bg-slate-200" />
+                        <div className="h-6 w-20 rounded bg-slate-200" />
                       </div>
+                      <div className="mt-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                        {[...Array(6)].map((_, j) => (
+                          <div key={j} className="h-12 rounded-lg bg-slate-200" />
+                        ))}
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : subscriptionRequests.length === 0 ? (
+                <Card>
+                  <div className="py-12 text-center">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-3xl">
+                      📭
                     </div>
+                    <h3 className="text-xl font-semibold text-slate-900">No subscription requests found</h3>
+                    <p className="mt-2 text-slate-600">All requests will appear here once users subscribe.</p>
+                  </div>
+                </Card>
+              ) : (
+                <>
+                  {/* Compact Request List */}
+                  <div className="space-y-3">
+                    {paginatedRequests.map((item) => {
+                      const isRejectingThis = subscriptionRejectingId === item.id;
+                      const whatsappNumber = item.user_phone
+                        ? item.user_phone.replace(/[^\d]/g, "")
+                        : "";
 
-                    {/* Badges */}
-                    <div className="flex flex-wrap items-center gap-2 shrink-0">
-                      <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-indigo-100">
-                        {item.plan.name}
-                      </span>
-                      <span
-                        className={`rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ${
-                          item.status === "approved"
-                            ? "bg-emerald-50 text-emerald-700 ring-emerald-100"
-                            : item.status === "rejected"
-                            ? "bg-red-50 text-red-700 ring-red-100"
-                            : "bg-amber-50 text-amber-700 ring-amber-100"
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </div>
+                      return (
+                        <Card key={item.id} className="p-4 hover:shadow-md transition-shadow">
+                          <div className="flex flex-col gap-3">
+                            {/* Row 1: User + Plan + Status + Actions */}
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              {/* User Info - WITH PHONE NUMBER */}
+                              <div className="min-w-0">
+                                <p className="font-semibold text-slate-900 truncate">
+                                  {item.user_name || item.user_email}
+                                </p>
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
+                                  {/* Phone - Displayed prominently first */}
+                                  {item.user_phone ? (
+                                    <span className="flex items-center gap-1 font-medium text-slate-700">
+                                      📞 {item.user_phone}
+                                      <span className="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">
+                                        Reg
+                                      </span>
+                                    </span>
+                                  ) : (
+                                    <span className="flex items-center gap-1 text-slate-400">
+                                      📞 No phone
+                                    </span>
+                                  )}
+                                  {/* Email */}
+                                  <span className="flex items-center gap-1">
+                                    ✉️ {item.user_email}
+                                  </span>
+                                </div>
+                              </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        onClick={() => approveSubscriptionMutation.mutate(item.id)}
-                        disabled={approveSubscriptionMutation.isPending || item.status === "approved"}
-                        className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-                          item.status === "approved"
-                            ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                            : "bg-emerald-600 text-white hover:bg-emerald-700"
-                        }`}
-                      >
-                        {approveSubscriptionMutation.isPending ? "..." : "Approve"}
-                      </button>
-                      {!isRejectingThis && (
-                        <button
-                          onClick={() => {
-                            setSubscriptionRejectingId(item.id);
-                            setSubscriptionRejectReason("");
-                          }}
-                          disabled={item.status === "rejected"}
-                          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-                            item.status === "rejected"
-                              ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                              : "border border-red-200 text-red-600 hover:bg-red-50"
-                          }`}
-                        >
-                          Reject
-                        </button>
-                      )}
-                    </div>
+                              {/* Badges */}
+                              <div className="flex flex-wrap items-center gap-2 shrink-0">
+                                <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-indigo-100">
+                                  {item.plan.name}
+                                </span>
+                                <span
+                                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ${
+                                    item.status === "approved"
+                                      ? "bg-emerald-50 text-emerald-700 ring-emerald-100"
+                                      : item.status === "rejected"
+                                      ? "bg-red-50 text-red-700 ring-red-100"
+                                      : "bg-amber-50 text-amber-700 ring-amber-100"
+                                  }`}
+                                >
+                                  {item.status}
+                                </span>
+                              </div>
+
+                              {/* Action Buttons */}
+                              <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                  onClick={() => approveSubscriptionMutation.mutate(item.id)}
+                                  disabled={approveSubscriptionMutation.isPending || item.status === "approved"}
+                                  className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                                    item.status === "approved"
+                                      ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                                      : "bg-emerald-600 text-white hover:bg-emerald-700"
+                                  }`}
+                                >
+                                  {approveSubscriptionMutation.isPending ? "..." : "Approve"}
+                                </button>
+                                {!isRejectingThis && (
+                                  <button
+                                    onClick={() => {
+                                      setSubscriptionRejectingId(item.id);
+                                      setSubscriptionRejectReason("");
+                                    }}
+                                    disabled={item.status === "rejected"}
+                                    className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                                      item.status === "rejected"
+                                        ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                                        : "border border-red-200 text-red-600 hover:bg-red-50"
+                                    }`}
+                                  >
+                                    Reject
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Row 2: Contact Buttons */}
+                            <div className="flex flex-wrap items-center gap-2">
+                              {item.user_phone && (
+                                <>
+                                  <a
+                                    href={`tel:${item.user_phone}`}
+                                    className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100 transition"
+                                  >
+                                    📞 Call
+                                  </a>
+                                  {whatsappNumber && (
+                                    <a
+                                      href={`https://wa.me/${whatsappNumber}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 rounded-lg border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700 hover:bg-green-100 transition"
+                                    >
+                                      💬 WhatsApp
+                                    </a>
+                                  )}
+                                </>
+                              )}
+                              <a
+                                href={`mailto:${item.user_email}`}
+                                className="inline-flex items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 transition"
+                              >
+                                ✉️ Email
+                              </a>
+                            </div>
+
+                            {/* Row 3: Stats Grid */}
+                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 text-xs">
+                              <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
+                                <p className="text-[10px] uppercase text-slate-400">Price</p>
+                                <p className="font-medium text-slate-700">{item.plan.currency} {formatNumber(item.plan.price)}</p>
+                              </div>
+                              <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
+                                <p className="text-[10px] uppercase text-slate-400">Limit</p>
+                                <p className="font-medium text-slate-700">{item.plan.max_listings}</p>
+                              </div>
+                              <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
+                                <p className="text-[10px] uppercase text-slate-400">Used</p>
+                                <p className="font-medium text-slate-700">{item.usage?.used_listings ?? 0}</p>
+                              </div>
+                              <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
+                                <p className="text-[10px] uppercase text-slate-400">Remaining</p>
+                                <p className="font-medium text-slate-700">{item.usage?.remaining_listings ?? 0}</p>
+                              </div>
+                              <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
+                                <p className="text-[10px] uppercase text-slate-400">Requested</p>
+                                <p className="font-medium text-slate-700 text-[11px]">{formatDate(item.requested_at)}</p>
+                              </div>
+                              <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
+                                <p className="text-[10px] uppercase text-slate-400">Payment</p>
+                                <p className="font-medium text-slate-700 text-[11px] truncate">
+                                  {item.latest_payment ? item.latest_payment.status : "N/A"}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Reject Panel */}
+                            {isRejectingThis && (
+                              <div className="mt-2 rounded-xl border border-red-200 bg-red-50/60 p-3">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <textarea
+                                    value={subscriptionRejectReason}
+                                    onChange={(e) => setSubscriptionRejectReason(e.target.value)}
+                                    placeholder="Reason for rejection..."
+                                    className="flex-1 min-h-[40px] rounded-lg border border-slate-300 bg-white p-2 text-sm outline-none focus:border-red-400 resize-none"
+                                    rows={1}
+                                  />
+                                  <div className="flex gap-2">
+                                    <button
+                                      className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 transition"
+                                      onClick={() =>
+                                        rejectSubscriptionMutation.mutate({
+                                          subscriptionId: item.id,
+                                          reason: subscriptionRejectReason.trim() || "Rejected by admin",
+                                        })
+                                      }
+                                      disabled={rejectSubscriptionMutation.isPending}
+                                    >
+                                      {rejectSubscriptionMutation.isPending ? "..." : "Confirm"}
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        setSubscriptionRejectingId(null);
+                                        setSubscriptionRejectReason("");
+                                      }}
+                                      className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 transition"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </Card>
+                      );
+                    })}
                   </div>
 
-                  {/* Row 2: Contact Buttons */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    {item.user_phone && (
-                      <>
-                        <a
-                          href={`tel:${item.user_phone}`}
-                          className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100 transition"
-                        >
-                          📞 Call
-                        </a>
-                        {whatsappNumber && (
-                          <a
-                            href={`https://wa.me/${whatsappNumber}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 rounded-lg border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700 hover:bg-green-100 transition"
-                          >
-                            💬 WhatsApp
-                          </a>
-                        )}
-                      </>
-                    )}
-                    <a
-                      href={`mailto:${item.user_email}`}
-                      className="inline-flex items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 transition"
-                    >
-                      ✉️ Email
-                    </a>
-                  </div>
-
-                  {/* Row 3: Stats Grid */}
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 text-xs">
-                    <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
-                      <p className="text-[10px] uppercase text-slate-400">Price</p>
-                      <p className="font-medium text-slate-700">{item.plan.currency} {formatNumber(item.plan.price)}</p>
-                    </div>
-                    <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
-                      <p className="text-[10px] uppercase text-slate-400">Limit</p>
-                      <p className="font-medium text-slate-700">{item.plan.max_listings}</p>
-                    </div>
-                    <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
-                      <p className="text-[10px] uppercase text-slate-400">Used</p>
-                      <p className="font-medium text-slate-700">{item.usage?.used_listings ?? 0}</p>
-                    </div>
-                    <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
-                      <p className="text-[10px] uppercase text-slate-400">Remaining</p>
-                      <p className="font-medium text-slate-700">{item.usage?.remaining_listings ?? 0}</p>
-                    </div>
-                    <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
-                      <p className="text-[10px] uppercase text-slate-400">Requested</p>
-                      <p className="font-medium text-slate-700 text-[11px]">{formatDate(item.requested_at)}</p>
-                    </div>
-                    <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
-                      <p className="text-[10px] uppercase text-slate-400">Payment</p>
-                      <p className="font-medium text-slate-700 text-[11px] truncate">
-                        {item.latest_payment ? item.latest_payment.status : "N/A"}
+                  {/* Pagination */}
+                  {totalSubscriptionPages > 1 && (
+                    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4">
+                      <p className="text-sm text-slate-500">
+                        Showing <span className="font-medium">
+                          {(subscriptionPage - 1) * subscriptionPageSize + 1}-
+                          {Math.min(subscriptionPage * subscriptionPageSize, subscriptionRequests.length)}
+                        </span> of{' '}
+                        <span className="font-medium">{subscriptionRequests.length}</span> requests
                       </p>
-                    </div>
-                  </div>
-
-                  {/* Reject Panel */}
-                  {isRejectingThis && (
-                    <div className="mt-2 rounded-xl border border-red-200 bg-red-50/60 p-3">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <textarea
-                          value={subscriptionRejectReason}
-                          onChange={(e) => setSubscriptionRejectReason(e.target.value)}
-                          placeholder="Reason for rejection..."
-                          className="flex-1 min-h-[40px] rounded-lg border border-slate-300 bg-white p-2 text-sm outline-none focus:border-red-400 resize-none"
-                          rows={1}
-                        />
-                        <div className="flex gap-2">
-                          <button
-                            className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 transition"
-                            onClick={() =>
-                              rejectSubscriptionMutation.mutate({
-                                subscriptionId: item.id,
-                                reason: subscriptionRejectReason.trim() || "Rejected by admin",
-                              })
-                            }
-                            disabled={rejectSubscriptionMutation.isPending}
-                          >
-                            {rejectSubscriptionMutation.isPending ? "..." : "Confirm"}
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSubscriptionRejectingId(null);
-                              setSubscriptionRejectReason("");
-                            }}
-                            className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 transition"
-                          >
-                            Cancel
-                          </button>
-                        </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => setSubscriptionPage(p => Math.max(1, p - 1))}
+                          disabled={subscriptionPage === 1}
+                          className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        >
+                          ← Prev
+                        </button>
+                        {Array.from({ length: Math.min(totalSubscriptionPages, 5) }, (_, i) => {
+                          let pageNum;
+                          if (totalSubscriptionPages <= 5) {
+                            pageNum = i + 1;
+                          } else if (subscriptionPage <= 3) {
+                            pageNum = i + 1;
+                          } else if (subscriptionPage >= totalSubscriptionPages - 2) {
+                            pageNum = totalSubscriptionPages - 4 + i;
+                          } else {
+                            pageNum = subscriptionPage - 2 + i;
+                          }
+                          return (
+                            <button
+                              key={pageNum}
+                              onClick={() => setSubscriptionPage(pageNum)}
+                              className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+                                subscriptionPage === pageNum
+                                  ? "bg-slate-900 text-white"
+                                  : "border border-slate-300 text-slate-700 hover:bg-slate-50"
+                              }`}
+                            >
+                              {pageNum}
+                            </button>
+                          );
+                        })}
+                        {totalSubscriptionPages > 5 && subscriptionPage < totalSubscriptionPages - 2 && (
+                          <span className="px-2 text-slate-400">…</span>
+                        )}
+                        <button
+                          onClick={() => setSubscriptionPage(p => Math.min(totalSubscriptionPages, p + 1))}
+                          disabled={subscriptionPage === totalSubscriptionPages}
+                          className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        >
+                          Next →
+                        </button>
                       </div>
                     </div>
                   )}
+                </>
+              )}
+
+              {/* Payment History Section */}
+              <div className="mt-10">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-xl font-semibold text-slate-900">Payment History</h2>
+                    <p className="mt-1 text-sm text-slate-600">Review all recorded subscription payments.</p>
+                  </div>
+                  <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600">
+                    {subscriptionPayments.length} payments
+                  </span>
                 </div>
-              </Card>
-            );
-          })}
-        </div>
+              </div>
 
-        {/* Pagination */}
-        {subscriptionRequests.length > 10 && (
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4">
-            <p className="text-sm text-slate-500">
-              Showing <span className="font-medium">1-{Math.min(10, subscriptionRequests.length)}</span> of{' '}
-              <span className="font-medium">{subscriptionRequests.length}</span> requests
-            </p>
-            <div className="flex gap-1">
-              <button
-                className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition"
-                disabled
-              >
-                ← Prev
-              </button>
-              <button className="rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white">1</button>
-              <button className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">
-                2
-              </button>
-              <button className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">
-                3
-              </button>
-              <button className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">
-                Next →
-              </button>
-            </div>
-          </div>
-        )}
-      </>
-    )}
-
-    {/* Payment History Section - Compact */}
-    <div className="mt-10">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-semibold text-slate-900">Payment History</h2>
-          <p className="mt-1 text-sm text-slate-600">Review all recorded subscription payments.</p>
-        </div>
-        <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600">
-          {subscriptionPayments.length} payments
-        </span>
-      </div>
-    </div>
-
-    <div className="mt-4">
-      {isLoadingSubscriptionPayments ? (
-        <p className="text-slate-600">Loading payment history...</p>
-      ) : subscriptionPayments.length === 0 ? (
-        <Card>
-          <div className="py-8 text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-2xl">
-              💳
-            </div>
-            <h3 className="text-lg font-semibold text-slate-900">No payments found</h3>
-            <p className="mt-1 text-sm text-slate-600">Subscription payments will appear here.</p>
-          </div>
-        </Card>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200">
-          <table className="min-w-full divide-y divide-slate-200 text-sm">
-            <thead className="bg-slate-50">
-              <tr className="text-left text-xs font-semibold uppercase text-slate-500">
-                <th className="px-4 py-2.5">ID</th>
-                <th className="px-4 py-2.5">Subscription</th>
-                <th className="px-4 py-2.5">Amount</th>
-                <th className="px-4 py-2.5">Status</th>
-                <th className="px-4 py-2.5 hidden sm:table-cell">Method</th>
-                <th className="px-4 py-2.5 hidden md:table-cell">Transaction</th>
-                <th className="px-4 py-2.5">Paid At</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {subscriptionPayments.slice(0, 10).map((payment) => (
-                <tr key={payment.id} className="hover:bg-slate-50 transition">
-                  <td className="px-4 py-2.5 text-slate-700 font-mono text-xs">{payment.id}</td>
-                  <td className="px-4 py-2.5 text-slate-700">#{payment.subscription}</td>
-                  <td className="px-4 py-2.5 font-medium text-slate-900">
-                    {payment.currency} {formatNumber(payment.amount)}
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                      payment.status === "successful" ? "bg-green-100 text-green-700" :
-                      payment.status === "pending" ? "bg-amber-100 text-amber-700" :
-                      "bg-red-100 text-red-700"
-                    }`}>
-                      {payment.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-2.5 text-slate-600 hidden sm:table-cell">{payment.payment_method || "—"}</td>
-                  <td className="px-4 py-2.5 text-slate-600 hidden md:table-cell font-mono text-xs truncate max-w-[100px]">
-                    {payment.transaction_id || "—"}
-                  </td>
-                  <td className="px-4 py-2.5 text-slate-600 text-xs whitespace-nowrap">
-                    {formatDate(payment.paid_at || undefined)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {subscriptionPayments.length > 10 && (
-            <div className="border-t border-slate-200 px-4 py-3 text-center text-sm text-slate-500">
-              Showing 1-10 of {subscriptionPayments.length} payments
-            </div>
+              <div className="mt-4">
+                {isLoadingSubscriptionPayments ? (
+                  <p className="text-slate-600">Loading payment history...</p>
+                ) : subscriptionPayments.length === 0 ? (
+                  <Card>
+                    <div className="py-8 text-center">
+                      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-2xl">
+                        💳
+                      </div>
+                      <h3 className="text-lg font-semibold text-slate-900">No payments found</h3>
+                      <p className="mt-1 text-sm text-slate-600">Subscription payments will appear here.</p>
+                    </div>
+                  </Card>
+                ) : (
+                  <div className="overflow-x-auto rounded-xl border border-slate-200">
+                    <table className="min-w-full divide-y divide-slate-200 text-sm">
+                      <thead className="bg-slate-50">
+                        <tr className="text-left text-xs font-semibold uppercase text-slate-500">
+                          <th className="px-4 py-2.5">ID</th>
+                          <th className="px-4 py-2.5">User</th>
+                          <th className="px-4 py-2.5">Plan</th>
+                          <th className="px-4 py-2.5">Amount</th>
+                          <th className="px-4 py-2.5">Status</th>
+                          <th className="px-4 py-2.5 hidden sm:table-cell">Method</th>
+                          <th className="px-4 py-2.5 hidden lg:table-cell">Start Date</th>
+                          <th className="px-4 py-2.5 hidden lg:table-cell">End Date</th>
+                          <th className="px-4 py-2.5">Paid At</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {subscriptionPayments.map((payment) => {
+                          const subscription = subscriptionRequests.find(
+                            (sub) => sub.id === payment.subscription
+                          );
+                          const userName = subscription?.user_name || 'Unknown';
+                          const userEmail = subscription?.user_email || '';
+                          
+                          return (
+                            <tr key={payment.id} className="hover:bg-slate-50 transition">
+                              <td className="px-4 py-2.5 text-slate-700 font-mono text-xs">#{payment.id}</td>
+                              <td className="px-4 py-2.5">
+                                <div className="flex flex-col">
+                                  <span className="font-medium text-slate-900">{userName}</span>
+                                  {userEmail && (
+                                    <span className="text-xs text-slate-500 truncate max-w-[120px]">
+                                      {userEmail}
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="px-4 py-2.5">
+                                <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                                  {subscription?.plan?.name || 'N/A'}
+                                </span>
+                              </td>
+                              <td className="px-4 py-2.5 font-medium text-slate-900">
+                                {payment.currency} {formatNumber(payment.amount)}
+                              </td>
+                              <td className="px-4 py-2.5">
+                                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                                  payment.status === "successful" ? "bg-green-100 text-green-700" :
+                                  payment.status === "pending" ? "bg-amber-100 text-amber-700" :
+                                  "bg-red-100 text-red-700"
+                                }`}>
+                                  {payment.status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-2.5 text-slate-600 hidden sm:table-cell">
+                                {payment.payment_method || "—"}
+                              </td>
+                              <td className="px-4 py-2.5 text-slate-600 hidden lg:table-cell text-xs">
+                                {subscription?.start_date ? formatDate(subscription.start_date) : "—"}
+                              </td>
+                              <td className="px-4 py-2.5 text-slate-600 hidden lg:table-cell text-xs">
+                                {subscription?.end_date ? formatDate(subscription.end_date) : "—"}
+                              </td>
+                              <td className="px-4 py-2.5 text-slate-600 text-xs whitespace-nowrap">
+                                {formatDate(payment.paid_at || undefined)}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </>
           )}
-        </div>
-      )}
-    </div>
-  </>
-)}
-
-
-
-
-
-
-
-
-
 
         </div>
       </PageContainer>
 
+      {/* Category Modal */}
       {isCategoryModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
           <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
@@ -3425,7 +3343,6 @@ export default function AdminModerationPage() {
                   onClick={resetCategoryForm}
                   className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
                 >
-                  {/* {t("admin.category_modal.cancel")} */}
                   {t("admin.category_modal.close")}
                 </button>
               </div>
