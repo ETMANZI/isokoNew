@@ -944,6 +944,12 @@
     "title": "User Guide",
     "subtitle": "Everything you need to know about using Market Hub",
     "search_placeholder": "Search guide...",
+    "screenshot_placeholder": "Screenshot Placeholder",
+    "registration_screenshot_hint": "Registration form screenshot will appear here",
+    "publish_screenshot_hint": "Publish listing form screenshot will appear here",
+    "subscription_screenshot_hint": "Subscription plans screenshot will appear here",
+    "call_now":"Call Now",
+    "whatsapp":"WhatsApp",
     
     "getting_started": {
       "title": "Getting Started",
