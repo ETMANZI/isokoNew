@@ -103,6 +103,7 @@ class AdminUserSubscriptionSerializer(serializers.ModelSerializer):
     is_currently_active = serializers.ReadOnlyField()
     user_name = serializers.SerializerMethodField()
     user_email = serializers.SerializerMethodField()
+    user_phone = serializers.SerializerMethodField()  # 👈 Phone number from User model
     usage = serializers.SerializerMethodField()
     latest_payment = serializers.SerializerMethodField()
 
@@ -113,6 +114,7 @@ class AdminUserSubscriptionSerializer(serializers.ModelSerializer):
             "user",
             "user_name",
             "user_email",
+            "user_phone",  # 👈 Added to fields
             "plan",
             "status",
             "rejection_reason",
@@ -136,6 +138,13 @@ class AdminUserSubscriptionSerializer(serializers.ModelSerializer):
 
     def get_user_email(self, obj):
         return obj.user.email
+
+    def get_user_phone(self, obj):  # 👈 Get phone number from User model
+        """
+        Get the user's phone number from the User model.
+        The phone_number field is directly on the User model.
+        """
+        return obj.user.phone_number  # Direct access since it's on User model
 
     def get_usage(self, obj):
         used_listings = Listing.objects.filter(

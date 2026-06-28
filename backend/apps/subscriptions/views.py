@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils import timezone
 from apps.listings.models import Listing
+from django.db.models import Q  # 👈 Add this import
 
 from apps.notifications.utils import create_notification
 
@@ -137,16 +138,62 @@ class MySubscriptionPaymentsView(generics.ListAPIView):
         return SubscriptionPayment.objects.filter(user=self.request.user).order_by("-created_at")
 
 
+# class AdminSubscriptionRequestListView(generics.ListAPIView):
+#     serializer_class = AdminUserSubscriptionSerializer
+#     permission_classes = [permissions.IsAdminUser]
+
+#     def get_queryset(self):
+#         return (
+#             UserSubscription.objects.select_related("user", "plan", "approved_by")
+#             .prefetch_related("payments")
+#             .order_by("-requested_at")
+#         )
+
+
+
 class AdminSubscriptionRequestListView(generics.ListAPIView):
     serializer_class = AdminUserSubscriptionSerializer
     permission_classes = [permissions.IsAdminUser]
 
     def get_queryset(self):
-        return (
+        queryset = (
             UserSubscription.objects.select_related("user", "plan", "approved_by")
             .prefetch_related("payments")
             .order_by("-requested_at")
         )
+        
+        # 👇 Add filtering by status
+        status_filter = self.request.query_params.get('status')
+        if status_filter:
+            queryset = queryset.filter(status=status_filter)
+        
+        # 👇 Add filtering by phone number
+        phone = self.request.query_params.get('phone')
+        if phone:
+            queryset = queryset.filter(user__phone_number__icontains=phone)
+        
+        # 👇 Add filtering by email
+        email = self.request.query_params.get('email')
+        if email:
+            queryset = queryset.filter(user__email__icontains=email)
+        
+        # 👇 Add searching across multiple fields
+        search = self.request.query_params.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(user__phone_number__icontains=search) |
+                Q(user__email__icontains=search) |
+                Q(user__first_name__icontains=search) |
+                Q(user__last_name__icontains=search) |
+                Q(user__username__icontains=search)
+            )
+        
+        return queryset
+
+
+
+
+
 
 
 class AdminSubscriptionPaymentListView(generics.ListAPIView):
@@ -154,11 +201,22 @@ class AdminSubscriptionPaymentListView(generics.ListAPIView):
     permission_classes = [permissions.IsAdminUser]
 
     def get_queryset(self):
-        return (
+        queryset = (
             SubscriptionPayment.objects.select_related("user", "subscription", "subscription__plan")
             .order_by("-created_at")
         )
-
+        
+        # 👇 Add filtering by status
+        status_filter = self.request.query_params.get('status')
+        if status_filter:
+            queryset = queryset.filter(status=status_filter)
+        
+        # 👇 Add filtering by user
+        user_id = self.request.query_params.get('user_id')
+        if user_id:
+            queryset = queryset.filter(user_id=user_id)
+        
+        return queryset
 
 
 
@@ -382,3 +440,49 @@ class UserSubscriptionLimitsView(APIView):
             }
         
         return Response(limits)
+    
+
+
+
+class AdminSubscriptionRequestDetailView(generics.RetrieveAPIView):
+    """Get a specific subscription request with full details including user info"""
+    serializer_class = AdminUserSubscriptionSerializer
+    permission_classes = [permissions.IsAdminUser]
+    lookup_field = 'pk'
+    
+    def get_queryset(self):
+        return (
+            UserSubscription.objects.select_related("user", "plan", "approved_by")
+            .prefetch_related("payments")
+        )
+    
+
+class AdminSubscriptionStatsView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+    
+    def get(self, request):
+        now = timezone.now()
+        
+        stats = {
+            "pending_count": UserSubscription.objects.filter(status="pending").count(),
+            "approved_count": UserSubscription.objects.filter(status="approved").count(),
+            "rejected_count": UserSubscription.objects.filter(status="rejected").count(),
+            "active_count": UserSubscription.objects.filter(
+                status="approved",
+                is_active=True,
+                end_date__gt=now
+            ).count(),
+            "expired_count": UserSubscription.objects.filter(
+                status="approved",
+                end_date__lt=now
+            ).count(),
+        }
+        
+        # Get recent requests (last 7 days)
+        recent = UserSubscription.objects.filter(
+            requested_at__gte=now - timezone.timedelta(days=7)
+        ).count()
+        
+        stats["recent_7_days"] = recent
+        
+        return Response(stats)
