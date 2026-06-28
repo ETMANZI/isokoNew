@@ -3305,6 +3305,11 @@ export default function AdminModerationPage() {
                           })}
                         </tbody>
                       </table>
+                        {subscriptionPayments.length > 10 && (
+                        <div className="border-t border-slate-200 px-4 py-3 text-center text-sm text-slate-500">
+                          Showing 1-10 of {subscriptionPayments.length} payments
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
