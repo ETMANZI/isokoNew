@@ -25,7 +25,6 @@ type ListingImage = {
 };
 
 type ModerationListing = {
-
   id: string;
   title: string;
   listing_type: string;
@@ -117,7 +116,7 @@ type AdminSubscriptionRequest = {
   user: number;
   user_name: string;
   user_email: string;
-  user_phone?: string; 
+  user_phone?: string;
   status: string;
   rejection_reason?: string;
   requested_at?: string;
@@ -404,6 +403,7 @@ export default function AdminModerationPage() {
 
   // Subscription pagination state
   const [subscriptionPage, setSubscriptionPage] = useState(1);
+  const [subscriptionSearch, setSubscriptionSearch] = useState("");
   const subscriptionPageSize = 10;
 
   const [subscriptionRejectingId, setSubscriptionRejectingId] = useState<number | null>(null);
@@ -498,18 +498,34 @@ export default function AdminModerationPage() {
     enabled: activeTab === "subscriptions",
   });
 
-  // Pagination logic for subscription requests
+  // Filter subscription requests based on search
+  const filteredRequests = useMemo(() => {
+    if (!subscriptionSearch.trim()) return subscriptionRequests;
+    const search = subscriptionSearch.toLowerCase().trim();
+    return subscriptionRequests.filter((item) => {
+      const searchable = [
+        item.user_name || "",
+        item.user_email || "",
+        item.user_phone || "",
+        item.plan?.name || "",
+        item.status || "",
+      ].join(" ").toLowerCase();
+      return searchable.includes(search);
+    });
+  }, [subscriptionRequests, subscriptionSearch]);
+
+  // Paginate filtered requests
   const paginatedRequests = useMemo(() => {
     const start = (subscriptionPage - 1) * subscriptionPageSize;
     const end = start + subscriptionPageSize;
-    return subscriptionRequests.slice(start, end);
-  }, [subscriptionRequests, subscriptionPage, subscriptionPageSize]);
+    return filteredRequests.slice(start, end);
+  }, [filteredRequests, subscriptionPage, subscriptionPageSize]);
 
-  const totalSubscriptionPages = Math.ceil(subscriptionRequests.length / subscriptionPageSize);
+  const totalSubscriptionPages = Math.ceil(filteredRequests.length / subscriptionPageSize);
 
   useEffect(() => {
     setSubscriptionPage(1);
-  }, [subscriptionRequests.length]);
+  }, [filteredRequests.length]);
 
   const rejectMutation = useMutation({
     mutationFn: async ({
@@ -1291,7 +1307,6 @@ export default function AdminModerationPage() {
             ))}
           </div>
 
-          {/* Moderation Tab */}
           {activeTab === "moderation" && (
             <>
               <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -1367,7 +1382,6 @@ export default function AdminModerationPage() {
                     return (
                       <Card key={item.id}>
                         <div className="flex flex-col gap-5 lg:flex-row">
-                          {/* IMAGE */}
                           <div className="relative w-full shrink-0 lg:w-[250px]">
                             <div className="overflow-hidden rounded-3xl bg-slate-100">
                               {coverImage ? (
@@ -1393,7 +1407,6 @@ export default function AdminModerationPage() {
                             </div>
                           </div>
 
-                          {/* CONTENT */}
                           <div className="min-w-0 flex-1">
                             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                               <div className="min-w-0">
@@ -1412,7 +1425,6 @@ export default function AdminModerationPage() {
                               </div>
                             </div>
 
-                            {/* INFO BOXES */}
                             <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                               {item.owner_email && (
                                 <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
@@ -1444,7 +1456,6 @@ export default function AdminModerationPage() {
                               </div>
                             </div>
 
-                            {/* DESCRIPTION */}
                             {item.description && (
                               <div className="mt-4 rounded-2xl border border-slate-200 bg-white px-4 py-4">
                                 <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
@@ -1456,7 +1467,6 @@ export default function AdminModerationPage() {
                               </div>
                             )}
 
-                            {/* QUICK ACTIONS */}
                             <div className="mt-4 flex flex-wrap gap-3">
                               <a
                                 href={`/listings/${item.id}`}
@@ -1488,7 +1498,6 @@ export default function AdminModerationPage() {
                               )}
                             </div>
 
-                            {/* REJECT PANEL */}
                             {isRejectingThis && (
                               <div className="mt-5 rounded-3xl border border-red-100 bg-red-50/60 p-4">
                                 <label className="mb-2 block text-sm font-semibold text-slate-700">
@@ -1528,7 +1537,6 @@ export default function AdminModerationPage() {
                             )}
                           </div>
 
-                          {/* ACTIONS */}
                           <div className="flex w-full shrink-0 flex-row gap-3 lg:w-[180px] lg:flex-col">
                             <Button
                               className="flex-1 bg-green-600"
@@ -1558,7 +1566,7 @@ export default function AdminModerationPage() {
             </>
           )}
 
-          {/* Categories Tab */}
+          {/* Categories Tab - Keep as is */}
           {activeTab === "categories" && (
             <>
               <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -2835,9 +2843,22 @@ export default function AdminModerationPage() {
                       Review subscription requests, approve or reject them, and monitor payment history.
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-slate-500">
-                    <span className="rounded-full bg-slate-100 px-3 py-1 font-medium">
-                      {subscriptionRequests.length} requests
+                  <div className="flex items-center gap-3">
+                    {/* Search Input */}
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search by name, email, or phone..."
+                        value={subscriptionSearch}
+                        onChange={(e) => setSubscriptionSearch(e.target.value)}
+                        className="w-48 sm:w-64 rounded-lg border border-slate-300 bg-white px-3 py-1.5 pl-8 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
+                      />
+                      <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                    <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-sm whitespace-nowrap">
+                      {filteredRequests.length} requests
                     </span>
                   </div>
                 </div>
@@ -2871,38 +2892,42 @@ export default function AdminModerationPage() {
                     </Card>
                   ))}
                 </div>
-              ) : subscriptionRequests.length === 0 ? (
+              ) : filteredRequests.length === 0 ? (
                 <Card>
                   <div className="py-12 text-center">
                     <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-3xl">
-                      📭
+                      {subscriptionSearch ? '🔍' : '📭'}
                     </div>
-                    <h3 className="text-xl font-semibold text-slate-900">No subscription requests found</h3>
-                    <p className="mt-2 text-slate-600">All requests will appear here once users subscribe.</p>
+                    <h3 className="text-xl font-semibold text-slate-900">
+                      {subscriptionSearch ? 'No matching requests found' : 'No subscription requests found'}
+                    </h3>
+                    <p className="mt-2 text-slate-600">
+                      {subscriptionSearch 
+                        ? `Try adjusting your search for "${subscriptionSearch}"`
+                        : 'All requests will appear here once users subscribe.'}
+                    </p>
                   </div>
                 </Card>
               ) : (
                 <>
-                  {/* Compact Request List */}
                   <div className="space-y-3">
                     {paginatedRequests.map((item) => {
                       const isRejectingThis = subscriptionRejectingId === item.id;
                       const whatsappNumber = item.user_phone
                         ? item.user_phone.replace(/[^\d]/g, "")
                         : "";
+                      const isApproved = item.status === "approved";
+                      const isRejected = item.status === "rejected";
 
                       return (
                         <Card key={item.id} className="p-4 hover:shadow-md transition-shadow">
                           <div className="flex flex-col gap-3">
-                            {/* Row 1: User + Plan + Status + Actions */}
                             <div className="flex flex-wrap items-center justify-between gap-2">
-                              {/* User Info - WITH PHONE NUMBER */}
                               <div className="min-w-0">
                                 <p className="font-semibold text-slate-900 truncate">
                                   {item.user_name || item.user_email}
                                 </p>
                                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
-                                  {/* Phone - Displayed prominently first */}
                                   {item.user_phone ? (
                                     <span className="flex items-center gap-1 font-medium text-slate-700">
                                       📞 {item.user_phone}
@@ -2915,23 +2940,21 @@ export default function AdminModerationPage() {
                                       📞 No phone
                                     </span>
                                   )}
-                                  {/* Email */}
                                   <span className="flex items-center gap-1">
                                     ✉️ {item.user_email}
                                   </span>
                                 </div>
                               </div>
 
-                              {/* Badges */}
                               <div className="flex flex-wrap items-center gap-2 shrink-0">
                                 <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-indigo-100">
                                   {item.plan.name}
                                 </span>
                                 <span
                                   className={`rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ${
-                                    item.status === "approved"
+                                    isApproved
                                       ? "bg-emerald-50 text-emerald-700 ring-emerald-100"
-                                      : item.status === "rejected"
+                                      : isRejected
                                       ? "bg-red-50 text-red-700 ring-red-100"
                                       : "bg-amber-50 text-amber-700 ring-amber-100"
                                   }`}
@@ -2940,18 +2963,21 @@ export default function AdminModerationPage() {
                                 </span>
                               </div>
 
-                              {/* Action Buttons */}
                               <div className="flex items-center gap-2 shrink-0">
                                 <button
                                   onClick={() => approveSubscriptionMutation.mutate(item.id)}
-                                  disabled={approveSubscriptionMutation.isPending || item.status === "approved"}
+                                  disabled={
+                                    approveSubscriptionMutation.isPending || 
+                                    isApproved || 
+                                    isRejected
+                                  }
                                   className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-                                    item.status === "approved"
+                                    isApproved || isRejected
                                       ? "bg-slate-100 text-slate-400 cursor-not-allowed"
                                       : "bg-emerald-600 text-white hover:bg-emerald-700"
                                   }`}
                                 >
-                                  {approveSubscriptionMutation.isPending ? "..." : "Approve"}
+                                  {approveSubscriptionMutation.isPending ? "..." : isApproved ? "✓ Approved" : "Approve"}
                                 </button>
                                 {!isRejectingThis && (
                                   <button
@@ -2959,20 +2985,19 @@ export default function AdminModerationPage() {
                                       setSubscriptionRejectingId(item.id);
                                       setSubscriptionRejectReason("");
                                     }}
-                                    disabled={item.status === "rejected"}
+                                    disabled={isApproved || isRejected}
                                     className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-                                      item.status === "rejected"
+                                      isApproved || isRejected
                                         ? "bg-slate-100 text-slate-400 cursor-not-allowed"
                                         : "border border-red-200 text-red-600 hover:bg-red-50"
                                     }`}
                                   >
-                                    Reject
+                                    {isRejected ? "✗ Rejected" : "Reject"}
                                   </button>
                                 )}
                               </div>
                             </div>
 
-                            {/* Row 2: Contact Buttons */}
                             <div className="flex flex-wrap items-center gap-2">
                               {item.user_phone && (
                                 <>
@@ -3002,7 +3027,6 @@ export default function AdminModerationPage() {
                               </a>
                             </div>
 
-                            {/* Row 3: Stats Grid */}
                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 text-xs">
                               <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
                                 <p className="text-[10px] uppercase text-slate-400">Price</p>
@@ -3027,12 +3051,15 @@ export default function AdminModerationPage() {
                               <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
                                 <p className="text-[10px] uppercase text-slate-400">Payment</p>
                                 <p className="font-medium text-slate-700 text-[11px] truncate">
-                                  {item.latest_payment ? item.latest_payment.status : "N/A"}
+                                  {item.latest_payment 
+                                    ? item.latest_payment.status === "successful" 
+                                      ? "✅ Paid" 
+                                      : item.latest_payment.status
+                                    : "N/A"}
                                 </p>
                               </div>
                             </div>
 
-                            {/* Reject Panel */}
                             {isRejectingThis && (
                               <div className="mt-2 rounded-xl border border-red-200 bg-red-50/60 p-3">
                                 <div className="flex flex-wrap items-center gap-2">
@@ -3075,15 +3102,14 @@ export default function AdminModerationPage() {
                     })}
                   </div>
 
-                  {/* Pagination */}
                   {totalSubscriptionPages > 1 && (
                     <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4">
                       <p className="text-sm text-slate-500">
                         Showing <span className="font-medium">
                           {(subscriptionPage - 1) * subscriptionPageSize + 1}-
-                          {Math.min(subscriptionPage * subscriptionPageSize, subscriptionRequests.length)}
+                          {Math.min(subscriptionPage * subscriptionPageSize, filteredRequests.length)}
                         </span> of{' '}
-                        <span className="font-medium">{subscriptionRequests.length}</span> requests
+                        <span className="font-medium">{filteredRequests.length}</span> requests
                       </p>
                       <div className="flex items-center gap-1">
                         <button
@@ -3134,7 +3160,6 @@ export default function AdminModerationPage() {
                 </>
               )}
 
-              {/* Payment History Section */}
               <div className="mt-10">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
@@ -3183,6 +3208,7 @@ export default function AdminModerationPage() {
                           );
                           const userName = subscription?.user_name || 'Unknown';
                           const userEmail = subscription?.user_email || '';
+                          const isPaymentSuccessful = payment.status === "successful";
                           
                           return (
                             <tr key={payment.id} className="hover:bg-slate-50 transition">
@@ -3207,11 +3233,13 @@ export default function AdminModerationPage() {
                               </td>
                               <td className="px-4 py-2.5">
                                 <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                                  payment.status === "successful" ? "bg-green-100 text-green-700" :
-                                  payment.status === "pending" ? "bg-amber-100 text-amber-700" :
-                                  "bg-red-100 text-red-700"
+                                  isPaymentSuccessful 
+                                    ? "bg-green-100 text-green-700" 
+                                    : payment.status === "pending" 
+                                    ? "bg-amber-100 text-amber-700" 
+                                    : "bg-red-100 text-red-700"
                                 }`}>
-                                  {payment.status}
+                                  {isPaymentSuccessful ? "✅ Successful" : payment.status}
                                 </span>
                               </td>
                               <td className="px-4 py-2.5 text-slate-600 hidden sm:table-cell">
