@@ -3240,7 +3240,7 @@ export default function AdminModerationPage() {
     <div className="mb-6">
       <h2 className="text-2xl font-semibold text-slate-900">Subscription Requests</h2>
       <p className="mt-1 text-sm text-slate-600">
-        Review subscription requests, approve or reject them, and monitor payment history. Abc
+        Review subscription requests, approve or reject them, and monitor payment history. Abco
       </p>
     </div>
 
