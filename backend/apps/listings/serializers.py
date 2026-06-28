@@ -361,6 +361,8 @@ class ListingSerializer(serializers.ModelSerializer):
         validated_data.pop("delete_image_ids", None)
         validated_data.pop("cover_image_id", None)
 
+        validated_data.pop("owner", None)
+
         listing = Listing.objects.create(
             owner=request.user,
             status=Listing.Status.PENDING,
