@@ -906,9 +906,51 @@
     },
     
     "footer": "Ubu bugororangingo ni ubw'amakuru gusa. Ibiciro n'ibiranga bishobora guhinduka."
+  },
+
+
+  "feedback": {
+    "title": "Tumenyeshe Ibyo Utekereza",
+    "subtitle": "Dushishikajwe n'ibyo utekereza. DuFashe guteza imbere Market Hub!",
+    
+    "rating": "Amanota",
+    "very_bad": "Bibi Cyane",
+    "bad": "Bibi",
+    "average": "Rwose",
+    "good": "Byiza",
+    "excellent": "Byiza Cyane",
+    "rating_required": "Nyamuneka hitamo amanota",
+    
+    "name": "Izina Ryawe",
+    "name_placeholder": "Andika izina ryawe ryose",
+    "name_required": "Izina rirakenewe",
+    
+    "email": "Aderesi ya Imeyili",
+    "email_placeholder": "wowe@urugero.com",
+    "email_required": "Imeyili irakenewe",
+    "email_invalid": "Nyamuneka andika aderesi ya imeyili ikwiye",
+    
+    "subject": "Ikibazo",
+    "select_subject": "Hitamo ikibazo",
+    "subject_bug": "Menashe Ikosa",
+    "subject_feature": "Saba Ikiranga Gishya",
+    "subject_improvement": "Inama yo Kugira Ngo Habe Nibyiza",
+    "subject_question": "Mfite Ikibazo",
+    "subject_other": "Ikindi",
+    "subject_required": "Nyamuneka hitamo ikibazo",
+    
+    "message": "Ubutumwa Bwawe",
+    "message_placeholder": "Tubwire ibyo utekereza...",
+    "message_required": "Nyamuneka andika ubutumwa",
+    "message_hint": "Andika ibintu byose ushobora. Dushishikajwe na buri butumwa!",
+    
+    "submit": "Ohereza Ibyo Utekereza",
+    "sending": "Birimo koherezwa...",
+    "success_message": "Urakoze! Ibyo utekereza byoherejwe neza.",
+    "error_message": "Hari ikibazo cyabaye. Nyamuneka ongera ugerageze nyuma.",
+    
+    "footer_note": "Ibyo utekereza bidufasha guteza imbere Market Hub kuri buri wese. Urakoze kubigihe cyawe!"
   }
-
-
 
 
 }

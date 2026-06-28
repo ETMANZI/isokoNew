@@ -1055,8 +1055,52 @@
     },
     
     "footer": "This guide is for informational purposes only. Prices and features subject to change."
-  }
 
+  },
+
+
+  "feedback": {
+    "title": "Send Feedback",
+    "subtitle": "We value your opinion. Help us make Market Hub better!",
+    
+    "rating": "Rating",
+    "very_bad": "Very Bad",
+    "bad": "Bad",
+    "average": "Average",
+    "good": "Good",
+    "excellent": "Excellent",
+    "rating_required": "Please select a rating",
+    
+    "name": "Your Name",
+    "name_placeholder": "Enter your full name",
+    "name_required": "Name is required",
+    
+    "email": "Email Address",
+    "email_placeholder": "you@example.com",
+    "email_required": "Email is required",
+    "email_invalid": "Please enter a valid email address",
+    
+    "subject": "Subject",
+    "select_subject": "Select a subject",
+    "subject_bug": "Report a Bug",
+    "subject_feature": "Feature Request",
+    "subject_improvement": "Suggestion for Improvement",
+    "subject_question": "I have a Question",
+    "subject_other": "Other",
+    "subject_required": "Please select a subject",
+    
+    "message": "Your Message",
+    "message_placeholder": "Tell us what's on your mind...",
+    "message_required": "Please enter your message",
+    "message_hint": "Be as specific as possible. We read every feedback!",
+    
+    "submit": "Send Feedback",
+    "sending": "Sending...",
+    "success_message": "Thank you! Your feedback has been sent successfully.",
+    "error_message": "Something went wrong. Please try again later.",
+    
+    "footer_note": "Your feedback helps us improve Market Hub for everyone. Thank you for your time!"
+  }
 
 
 
