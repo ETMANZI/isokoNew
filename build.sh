@@ -34,10 +34,10 @@ if [ -n "$NEW_JS" ] && [ -n "$NEW_CSS" ]; then
 fi
 cd ../..
 
-# Collect static files
+# Collect static files - USE python3 NOT python
 echo "📊 Collecting static files..."
 cd backend
-python manage.py collectstatic --noinput --clear
+python3 manage.py collectstatic --noinput --clear
 cd ..
 
 echo "✅ Build complete!"
