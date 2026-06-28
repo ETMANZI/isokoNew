@@ -1097,113 +1097,52 @@
     "footer_note": "Your feedback helps us improve Market Hub for everyone. Thank you for your time!"
   },
 
+
   "subscription": {
     "title": "Subscription Plans",
-    "subtitle": "Choose the plan that best fits your selling needs",
+    "description": "Choose the plan that best fits your selling needs",
+    
     "current_subscription": "Current Subscription",
-    "current_plan": "Your Current Plan",
-    "no_active_subscription": "You don't have an active subscription",
+    "current_plan": "Current Plan",
     
     "status": "Status",
     "status_active": "Active",
-    "status_pending": "Pending",
     "status_expired": "Expired",
-    "status_cancelled": "Cancelled",
-    "pending_activation": "Pending Activation",
+    "status_pending": "Pending",
+    "status_rejected": "Rejected",
     
+    "started_on": "Started on",
+    "ends_on": "Ends on",
     "days": "days",
-    "day": "day",
-    "monthly": "monthly",
-    "yearly": "yearly",
-    "per_month": "/month",
-    "per_year": "/year",
     
-    "features": {
-      "max_listings": "Listings",
-      "max_images": "Images per listing",
-      "business_ads": "Business ads",
-      "featured_listing": "Featured listing",
-      "advanced_analytics": "Advanced analytics",
-      "priority_support": "Priority support"
-    },
+    "max_listings": "Max Listings",
+    "max_images_per_listing": "Images per listing",
+    "business_ads": "Business ads",
+    "featured_listings": "Featured listings",
+    "advanced_analytics": "Advanced analytics",
+    "priority_support": "Priority support",
     
-    "plans": {
-      "basic": {
-        "name": "Basic",
-        "description": "For occasional sellers",
-        "price": "1,500 RWF",
-        "features": {
-          "listings": "3 Listings",
-          "images": "1 Image per listing"
-        }
-      },
-      "classic": {
-        "name": "Classic",
-        "description": "For regular sellers",
-        "price": "2,000 RWF",
-        "features": {
-          "listings": "3 Listings",
-          "images": "2 Images per listing",
-          "business_ads": "Business ads"
-        }
-      },
-      "premium": {
-        "name": "Premium",
-        "description": "For professional sellers",
-        "price": "3,000 RWF",
-        "features": {
-          "listings": "4 Listings",
-          "images": "3 Images per listing",
-          "business_ads": "Business ads",
-          "featured_listing": "Featured listing",
-          "advanced_analytics": "Advanced analytics"
-        }
-      },
-      "business": {
-        "name": "Business",
-        "description": "For businesses and enterprises",
-        "price": "4,000 RWF",
-        "features": {
-          "listings": "5 Listings",
-          "images": "4 Images per listing",
-          "business_ads": "Business ads",
-          "featured_listing": "Featured listing",
-          "advanced_analytics": "Advanced analytics",
-          "priority_support": "Priority support"
-        }
-      }
-    },
+    "renew_now": "Renew Now",
+    "renew_plan": "Renew Plan",
+    "choose_plan": "Choose Plan",
+    "processing": "Processing...",
+    "login_to_subscribe": "Login to Subscribe",
+    "pending_approval": "Pending Approval",
     
-    "most_popular": "⭐ Most Popular",
-    "best_value": "Best Value",
-    "recommended": "Recommended",
+    "request_submitted": "Subscription request submitted.",
+    "amount_to_pay": "Amount to pay:",
+    "failed_to_subscribe": "Failed to subscribe. Please try again.",
     
-    "subscribe": "Subscribe Now",
-    "upgrade": "Upgrade Plan",
-    "downgrade": "Downgrade",
-    "cancel": "Cancel Subscription",
-    "renew": "Renew Subscription",
+    "hidden_due_to_expiry": "Your subscription has expired. Your listings are hidden from public view.",
+    "hidden_count": "Hidden listings",
     
-    "current_plan_badge": "Current Plan",
-    "expires_on": "Expires on",
-    "renews_on": "Renews on",
-    "days_remaining": "days remaining",
-    "day_remaining": "day remaining",
+    "no_plans_available": "No Plans Available",
+    "no_plans_description": "There are no subscription plans available at the moment. Please check back later.",
     
-    "success_message": "Subscription updated successfully!",
-    "error_message": "Something went wrong. Please try again.",
+    "no_subscription_yet": "You don't have a subscription yet.",
+    "choose_plan_to_start": "Choose a plan above to start selling on Market Hub!",
     
-    "confirm_cancel": "Are you sure you want to cancel your subscription?",
-    "confirm_upgrade": "Are you sure you want to upgrade to {plan}?",
-    "confirm_downgrade": "Are you sure you want to downgrade to {plan}?",
-    
-    "no_plan_selected": "Please select a plan to continue",
-    "payment_required": "Payment required to activate subscription",
-    
-    "features_included": "Features Included",
-    "whats_included": "What's included",
-    "compare_plans": "Compare Plans",
-    "plan_details": "Plan Details"
+    "expired": "Expired"
   }
 
 

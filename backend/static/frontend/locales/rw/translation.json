@@ -948,112 +948,51 @@
 
   "subscription": {
     "title": "Gahunda zo Kwiyandikisha",
-    "subtitle": "Hitamo gahunda ikwiye ibyo ugurisha",
+    "description": "Hitamo gahunda ikwiye ibyo ugurisha",
+    
     "current_subscription": "Gahunda Uriyandikishijemo",
     "current_plan": "Gahunda Yawe",
-    "no_active_subscription": "Nta gahunda ufite ikora",
     
     "status": "Ibihe",
     "status_active": "Irakora",
-    "status_pending": "Iri gukora",
     "status_expired": "Yarangiye",
-    "status_cancelled": "Yahagaritswe",
-    "pending_activation": "Iri gutangira gukora",
+    "status_pending": "Iri gukora",
+    "status_rejected": "Yanze",
     
+    "started_on": "Yatangiye ku",
+    "ends_on": "Igaruka ku",
     "days": "iminsi",
-    "day": "umunsi",
-    "monthly": "ku kwezi",
-    "yearly": "ku mwaka",
-    "per_month": "/ukwezi",
-    "per_year": "/umwaka",
     
-    "features": {
-      "max_listings": "Ibigurishwa",
-      "max_images": "Amashusho kuri buri kigurishwa",
-      "business_ads": "Amatangazo y'ubucuruzi",
-      "featured_listing": "Ibigurishwa by'ibanze",
-      "advanced_analytics": "Ibisobanuro birambuye",
-      "priority_support": "Ubufasha bwihutirwa"
-    },
+    "max_listings": "Ibigurishwa Birenze",
+    "max_images_per_listing": "Amashusho kuri buri kigurishwa",
+    "business_ads": "Amatangazo y'ubucuruzi",
+    "featured_listings": "Ibigurishwa by'ibanze",
+    "advanced_analytics": "Ibisobanuro birambuye",
+    "priority_support": "Ubufasha bwihutirwa",
     
-    "plans": {
-      "basic": {
-        "name": "Shingiro",
-        "description": "Kubagurisha gake",
-        "price": "1.500 RWF",
-        "features": {
-          "listings": "Ibigurishwa 3",
-          "images": "Amashusho 1 kuri buri kigurishwa"
-        }
-      },
-      "classic": {
-        "name": "Kera",
-        "description": "Kubagurisha buri gihe",
-        "price": "2.000 RWF",
-        "features": {
-          "listings": "Ibigurishwa 3",
-          "images": "Amashusho 2 kuri buri kigurishwa",
-          "business_ads": "Amatangazo y'ubucuruzi"
-        }
-      },
-      "premium": {
-        "name": "Premium",
-        "description": "Kubagurisha babigize umwuga",
-        "price": "3.000 RWF",
-        "features": {
-          "listings": "Ibigurishwa 4",
-          "images": "Amashusho 3 kuri buri kigurishwa",
-          "business_ads": "Amatangazo y'ubucuruzi",
-          "featured_listing": "Ibigurishwa by'ibanze",
-          "advanced_analytics": "Ibisobanuro birambuye"
-        }
-      },
-      "business": {
-        "name": "Ubucuruzi",
-        "description": "Kubucuruzi n'ibigo",
-        "price": "4.000 RWF",
-        "features": {
-          "listings": "Ibigurishwa 5",
-          "images": "Amashusho 4 kuri buri kigurishwa",
-          "business_ads": "Amatangazo y'ubucuruzi",
-          "featured_listing": "Ibigurishwa by'ibanze",
-          "advanced_analytics": "Ibisobanuro birambuye",
-          "priority_support": "Ubufasha bwihutirwa"
-        }
-      }
-    },
+    "renew_now": "Vugurura Nonaha",
+    "renew_plan": "Vugurura Gahunda",
+    "choose_plan": "Hitamo Gahunda",
+    "processing": "Irakora...",
+    "login_to_subscribe": "Injira mbere yo kwiyandikisha",
+    "pending_approval": "Iri kwemezwa",
     
-    "most_popular": "⭐ Icyakunzwe Cyane",
-    "best_value": "Igiciro Gihwanye",
-    "recommended": "Irisabwa",
+    "request_submitted": "Ubwo kwiyandikisha bwoherejwe.",
+    "amount_to_pay": "Amafaranga yo kwishyura:",
+    "failed_to_subscribe": "Kwiyandikisha byananiwe. Ongera ugerageze.",
     
-    "subscribe": "Iyandikisha",
-    "upgrade": "Jya Hejuru",
-    "downgrade": "Manuka",
-    "cancel": "Hagarika Kwiyandikisha",
-    "renew": "Vugurura Kwiyandikisha",
+    "hidden_due_to_expiry": "Kwiyandikisha kwawe kwarangiye. Ibigurishwa byawe ntibigaragara ku bantu.",
+    "hidden_count": "Ibigurishwa byihishijwe",
     
-    "current_plan_badge": "Gahunda Iriho",
-    "expires_on": "Igaruka ku",
-    "renews_on": "Ivugururwa ku",
-    "days_remaining": "iminsi isigaye",
-    "day_remaining": "umunsi usigaye",
+    "no_plans_available": "Nta Gahunda Ihari",
+    "no_plans_description": "Nta gahunda yo kwiyandikisha ihari kuri ubu. Garuka nyuma.",
     
-    "success_message": "Kwiyandikisha byavuguruwe neza!",
-    "error_message": "Hari ikibazo cyabaye. Nyamuneka ongera ugerageze.",
+    "no_subscription_yet": "Uracyataye kwiyandikisha.",
+    "choose_plan_to_start": "Hitamo gahunda hejuru kugira ngo utangire kugurisha kuri Market Hub!",
     
-    "confirm_cancel": "Ukwiriye ko ushaka guhagarika kwiyandikisha kwawe?",
-    "confirm_upgrade": "Ukwiriye ko ushaka kujya hejuru kuri {plan}?",
-    "confirm_downgrade": "Ukwiriye ko ushaka kumanuka kuri {plan}?",
-    
-    "no_plan_selected": "Nyamuneka hitamo gahunda mbere yo gukomeza",
-    "payment_required": "Kwishyura birakenewe kugira ngo gahunda itangire gukora",
-    
-    "features_included": "Ibiranga Biriho",
-    "whats_included": "Ibiri muri gahunda",
-    "compare_plans": "Gereranya Gahunda",
-    "plan_details": "Ibisobanuro Bya Gahunda"
+    "expired": "Yarangiye"
   }
+
 
 
 
