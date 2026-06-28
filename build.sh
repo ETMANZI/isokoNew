@@ -3,7 +3,11 @@ set -o errexit
 
 echo "🚀 Starting Heroku build process..."
 
-# Install frontend dependencies and build
+# Install Python dependencies FIRST
+echo "🐍 Installing Python dependencies..."
+pip install -r requirements.txt
+
+# Build React frontend
 echo "📦 Building React frontend..."
 cd frontend
 npm install
@@ -14,10 +18,6 @@ cd ..
 echo "📁 Copying React build to Django static..."
 mkdir -p backend/static/frontend
 cp -r frontend/dist/* backend/static/frontend/
-
-# Install Python dependencies
-echo "🐍 Installing Python dependencies..."
-pip install -r requirements.txt
 
 # Collect Django static files
 echo "📊 Collecting Django static files..."
