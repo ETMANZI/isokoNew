@@ -794,6 +794,10 @@
     "title": "Ubugororangingo",
     "subtitle": "Ibyose ugomba kumenya kuri Market Hub",
     "search_placeholder": "Shakisha mu bugororangingo...",
+    "screenshot_placeholder": "Aho amashusho azagaragara",
+    "registration_screenshot_hint": "Amashusho yo kwiyandikisha azagaragara hano",
+    "publish_screenshot_hint": "Amashusho yo gushyira ibigurishwa azagaragara hano",
+    "subscription_screenshot_hint": "Amashusho ya gahunda zo kwiyandikisha azagaragara hano",
     
     "getting_started": {
       "title": "Kwinjira",
