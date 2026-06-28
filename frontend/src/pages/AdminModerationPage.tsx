@@ -3306,22 +3306,29 @@ export default function AdminModerationPage() {
                 <div className="flex flex-col gap-3">
                   {/* Row 1: User + Plan + Status + Actions */}
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    {/* User Info */}
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="min-w-0">
-                        <p className="font-semibold text-slate-900 truncate">
-                          {item.user_name || item.user_email}
-                        </p>
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
-                          {item.user_phone && (
-                            <span className="flex items-center gap-1">
-                              📞 {item.user_phone}
+                    {/* User Info - WITH PHONE NUMBER */}
+                    <div className="min-w-0">
+                      <p className="font-semibold text-slate-900 truncate">
+                        {item.user_name || item.user_email}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
+                        {/* Phone - Displayed prominently first */}
+                        {item.user_phone ? (
+                          <span className="flex items-center gap-1 font-medium text-slate-700">
+                            📞 {item.user_phone}
+                            <span className="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">
+                              Reg
                             </span>
-                          )}
-                          <span className="flex items-center gap-1">
-                            ✉️ {item.user_email}
                           </span>
-                        </div>
+                        ) : (
+                          <span className="flex items-center gap-1 text-slate-400">
+                            📞 No phone
+                          </span>
+                        )}
+                        {/* Email */}
+                        <span className="flex items-center gap-1">
+                          ✉️ {item.user_email}
+                        </span>
                       </div>
                     </div>
 
