@@ -2,7 +2,7 @@
   "name": "marketplace",
   "private": true,
   "scripts": {
-    "heroku-postbuild": "cd frontend && npm install && npm run build && cd .."
+    "heroku-postbuild": "cd frontend && npm install && npx vite build && cd .."
   },
   "engines": {
     "node": "20.x"

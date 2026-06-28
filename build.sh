@@ -3,7 +3,7 @@ set -o errexit
 
 echo "🚀 Starting Heroku build process..."
 
-# Build React frontend
+# Install frontend dependencies and build
 echo "📦 Building React frontend..."
 cd frontend
 npm install
