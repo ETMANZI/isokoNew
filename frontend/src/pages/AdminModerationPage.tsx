@@ -3240,7 +3240,7 @@ export default function AdminModerationPage() {
     <div className="mb-6">
       <h2 className="text-2xl font-semibold text-slate-900">Subscription Requests</h2>
       <p className="mt-1 text-sm text-slate-600">
-        Review subscription requests, approve or reject them, and monitor payment history. Abc
+        Review subscription requests, approve or reject them, and monitor payment history.
       </p>
     </div>
 
@@ -3278,30 +3278,74 @@ export default function AdminModerationPage() {
             <Card key={item.id}>
               <div className="flex flex-col gap-5 lg:flex-row">
                 <div className="flex-1">
-                  {/* User Info Section */}
+                  {/* User Info Section - Smart Card Style */}
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="text-xl font-bold text-slate-900">
                         {item.user_name || item.user_email}
                       </h3>
                       
-                      {/* Email */}
-                      <p className="mt-1 text-sm text-slate-500 flex items-center gap-2">
-                        <span>✉️</span> {item.user_email}
-                      </p>
-                      
-                      {/* 👇 Phone Number - Display prominently */}
-                      {item.user_phone && (
-                        <p className="mt-1 text-sm font-medium text-slate-700 flex items-center gap-2">
-                          <span>📞</span> {item.user_phone}
-                          <span className="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                            Registration Phone
-                          </span>
-                        </p>
-                      )}
+                      {/* Contact Info Cards - Email & Phone side by side */}
+                      <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {/* Email Card */}
+                        <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 hover:shadow-md transition-shadow">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 flex items-center gap-1">
+                            <span>✉️</span> Email
+                          </p>
+                          <p className="mt-1 text-sm font-medium text-slate-700 truncate">
+                            {item.user_email}
+                          </p>
+                          <a
+                            href={`mailto:${item.user_email}`}
+                            className="mt-1 inline-block text-xs text-indigo-600 hover:underline"
+                          >
+                            Send email →
+                          </a>
+                        </div>
+                        
+                        {/* Phone Card */}
+                        {item.user_phone ? (
+                          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 hover:shadow-md transition-shadow">
+                            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 flex items-center gap-1">
+                              <span>📞</span> Phone
+                            </p>
+                            <p className="mt-1 text-sm font-medium text-slate-700">
+                              {item.user_phone}
+                              <span className="ml-2 text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                                Registration
+                              </span>
+                            </p>
+                            <div className="mt-1 flex gap-2">
+                              <a
+                                href={`tel:${item.user_phone}`}
+                                className="inline-block text-xs text-emerald-600 hover:underline"
+                              >
+                                Call now →
+                              </a>
+                              {whatsappNumber && (
+                                <a
+                                  href={`https://wa.me/${whatsappNumber}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-block text-xs text-green-600 hover:underline"
+                                >
+                                  WhatsApp →
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 opacity-60">
+                            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 flex items-center gap-1">
+                              <span>📞</span> Phone
+                            </p>
+                            <p className="mt-1 text-sm text-slate-500">No phone number</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 shrink-0">
                       <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-100">
                         {item.plan.name}
                       </span>
@@ -3317,36 +3361,6 @@ export default function AdminModerationPage() {
                         {item.status}
                       </span>
                     </div>
-                  </div>
-
-                  {/* 👇 Contact Buttons Section - Call, WhatsApp, Email */}
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {item.user_phone && (
-                      <>
-                        <a
-                          href={`tel:${item.user_phone}`}
-                          className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 transition hover:bg-emerald-100"
-                        >
-                          📞 Call
-                        </a>
-                        {whatsappNumber && (
-                          <a
-                            href={`https://wa.me/${whatsappNumber}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-medium text-green-700 transition hover:bg-green-100"
-                          >
-                            💬 WhatsApp
-                          </a>
-                        )}
-                      </>
-                    )}
-                    <a
-                      href={`mailto:${item.user_email}`}
-                      className="inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700 transition hover:bg-blue-100"
-                    >
-                      ✉️ Email
-                    </a>
                   </div>
 
                   {/* Plan Details Grid */}
@@ -3567,7 +3581,6 @@ export default function AdminModerationPage() {
     </div>
   </>
 )}
-
 
 
 
