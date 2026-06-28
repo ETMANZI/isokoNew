@@ -3266,91 +3266,46 @@ export default function AdminModerationPage() {
         </div>
       </Card>
     ) : (
-      <div className="space-y-5">
-        {subscriptionRequests.map((item) => {
-          const isRejectingThis = subscriptionRejectingId === item.id;
-          // Format phone number for WhatsApp (remove non-numeric characters)
-          const whatsappNumber = item.user_phone
-            ? item.user_phone.replace(/[^\d]/g, "")
-            : "";
+      <>
+        {/* Compact List */}
+        <div className="space-y-3">
+          {subscriptionRequests.map((item) => {
+            const isRejectingThis = subscriptionRejectingId === item.id;
+            const whatsappNumber = item.user_phone
+              ? item.user_phone.replace(/[^\d]/g, "")
+              : "";
 
-          return (
-            <Card key={item.id}>
-              <div className="flex flex-col gap-5 lg:flex-row">
-                <div className="flex-1">
-                  {/* User Info Section - Smart Card Style */}
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-slate-900">
-                        {item.user_name || item.user_email}
-                      </h3>
-                      
-                      {/* Contact Info Cards - Email & Phone side by side */}
-                      <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {/* Email Card */}
-                        <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 hover:shadow-md transition-shadow">
-                          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 flex items-center gap-1">
-                            <span>✉️</span> Email
-                          </p>
-                          <p className="mt-1 text-sm font-medium text-slate-700 truncate">
-                            {item.user_email}
-                          </p>
-                          <a
-                            href={`mailto:${item.user_email}`}
-                            className="mt-1 inline-block text-xs text-indigo-600 hover:underline"
-                          >
-                            Send email →
-                          </a>
+            return (
+              <Card key={item.id} className="p-4 hover:shadow-md transition-shadow">
+                <div className="flex flex-col gap-3">
+                  {/* Row 1: User + Plan + Status + Actions */}
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    {/* User Info - Compact */}
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-slate-900 truncate">
+                          {item.user_name || item.user_email}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                          {item.user_phone && (
+                            <span className="flex items-center gap-1">
+                              📞 {item.user_phone}
+                            </span>
+                          )}
+                          <span className="flex items-center gap-1">
+                            ✉️ {item.user_email}
+                          </span>
                         </div>
-                        
-                        {/* Phone Card */}
-                        {item.user_phone ? (
-                          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 hover:shadow-md transition-shadow">
-                            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 flex items-center gap-1">
-                              <span>📞</span> Phone
-                            </p>
-                            <p className="mt-1 text-sm font-medium text-slate-700">
-                              {item.user_phone}
-                              <span className="ml-2 text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                                Registration
-                              </span>
-                            </p>
-                            <div className="mt-1 flex gap-2">
-                              <a
-                                href={`tel:${item.user_phone}`}
-                                className="inline-block text-xs text-emerald-600 hover:underline"
-                              >
-                                Call now →
-                              </a>
-                              {whatsappNumber && (
-                                <a
-                                  href={`https://wa.me/${whatsappNumber}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-block text-xs text-green-600 hover:underline"
-                                >
-                                  WhatsApp →
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 opacity-60">
-                            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 flex items-center gap-1">
-                              <span>📞</span> Phone
-                            </p>
-                            <p className="mt-1 text-sm text-slate-500">No phone number</p>
-                          </div>
-                        )}
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 shrink-0">
-                      <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-100">
+                    {/* Status & Plan Badges */}
+                    <div className="flex flex-wrap items-center gap-2 shrink-0">
+                      <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-indigo-100">
                         {item.plan.name}
                       </span>
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ring-1 ${
+                        className={`rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ${
                           item.status === "approved"
                             ? "bg-emerald-50 text-emerald-700 ring-emerald-100"
                             : item.status === "rejected"
@@ -3361,177 +3316,166 @@ export default function AdminModerationPage() {
                         {item.status}
                       </span>
                     </div>
-                  </div>
 
-                  {/* Plan Details Grid */}
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                        Price
-                      </p>
-                      <p className="mt-1 text-sm font-medium text-slate-700">
-                        {item.plan.currency} {formatNumber(item.plan.price)}
-                      </p>
-                    </div>
-
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                        Listing Limit
-                      </p>
-                      <p className="mt-1 text-sm font-medium text-slate-700">
-                        {item.plan.max_listings}
-                      </p>
-                    </div>
-
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                        Used Listings
-                      </p>
-                      <p className="mt-1 text-sm font-medium text-slate-700">
-                        {item.usage?.used_listings ?? 0}
-                      </p>
-                    </div>
-
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                        Remaining
-                      </p>
-                      <p className="mt-1 text-sm font-medium text-slate-700">
-                        {item.usage?.remaining_listings ?? 0}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Dates Grid */}
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                        Requested At
-                      </p>
-                      <p className="mt-1 text-sm text-slate-700">
-                        {formatDate(item.requested_at)}
-                      </p>
-                    </div>
-
-                    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                        Start Date
-                      </p>
-                      <p className="mt-1 text-sm text-slate-700">
-                        {formatDate(item.start_date || undefined)}
-                      </p>
-                    </div>
-
-                    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                        End Date
-                      </p>
-                      <p className="mt-1 text-sm text-slate-700">
-                        {formatDate(item.end_date || undefined)}
-                      </p>
-                    </div>
-
-                    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                        Latest Payment
-                      </p>
-                      <p className="mt-1 text-sm text-slate-700">
-                        {item.latest_payment
-                          ? `${item.latest_payment.currency} ${formatNumber(item.latest_payment.amount)} • ${item.latest_payment.status}`
-                          : "No payment"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {item.rejection_reason && (
-                    <div className="mt-4 rounded-2xl border border-red-100 bg-red-50 px-4 py-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-red-500">
-                        Rejection Reason
-                      </p>
-                      <p className="mt-1 text-sm text-red-700">{item.rejection_reason}</p>
-                    </div>
-                  )}
-
-                  {isRejectingThis && (
-                    <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                      <label className="mb-2 block text-sm font-medium text-slate-700">
-                        Reject Reason
-                      </label>
-
-                      <textarea
-                        value={subscriptionRejectReason}
-                        onChange={(e) => setSubscriptionRejectReason(e.target.value)}
-                        placeholder="Why is this subscription being rejected?"
-                        className="min-h-24 w-full rounded-2xl border border-slate-300 bg-white p-3 outline-none focus:border-slate-700"
-                      />
-
-                      <div className="mt-3 flex flex-wrap gap-3">
+                    {/* Action Buttons - Compact */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button
+                        size="sm"
+                        className="bg-green-600 text-xs py-1 px-3 h-8"
+                        onClick={() => approveSubscriptionMutation.mutate(item.id)}
+                        disabled={approveSubscriptionMutation.isPending || item.status === "approved"}
+                      >
+                        {approveSubscriptionMutation.isPending ? "..." : "Approve"}
+                      </Button>
+                      {!isRejectingThis && (
                         <Button
-                          className="bg-red-600"
-                          onClick={() =>
-                            rejectSubscriptionMutation.mutate({
-                              subscriptionId: item.id,
-                              reason: subscriptionRejectReason.trim() || "Rejected by admin",
-                            })
-                          }
-                          disabled={rejectSubscriptionMutation.isPending}
-                        >
-                          {rejectSubscriptionMutation.isPending ? "Rejecting..." : "Confirm Reject"}
-                        </Button>
-
-                        <button
-                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="text-red-600 border-red-200 hover:bg-red-50 text-xs py-1 px-3 h-8"
                           onClick={() => {
-                            setSubscriptionRejectingId(null);
+                            setSubscriptionRejectingId(item.id);
                             setSubscriptionRejectReason("");
                           }}
-                          className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                          disabled={item.status === "rejected"}
                         >
-                          Cancel
-                        </button>
+                          Reject
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Row 2: Contact Buttons - Compact */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    {item.user_phone && (
+                      <>
+                        <a
+                          href={`tel:${item.user_phone}`}
+                          className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100 transition"
+                        >
+                          📞 Call
+                        </a>
+                        {whatsappNumber && (
+                          <a
+                            href={`https://wa.me/${whatsappNumber}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 rounded-lg border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700 hover:bg-green-100 transition"
+                          >
+                            💬 WhatsApp
+                          </a>
+                        )}
+                      </>
+                    )}
+                    <a
+                      href={`mailto:${item.user_email}`}
+                      className="inline-flex items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 transition"
+                    >
+                      ✉️ Email
+                    </a>
+                  </div>
+
+                  {/* Row 3: Stats Grid - Compact */}
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 text-xs">
+                    <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
+                      <p className="text-[10px] uppercase text-slate-400">Price</p>
+                      <p className="font-medium text-slate-700">{item.plan.currency} {formatNumber(item.plan.price)}</p>
+                    </div>
+                    <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
+                      <p className="text-[10px] uppercase text-slate-400">Limit</p>
+                      <p className="font-medium text-slate-700">{item.plan.max_listings}</p>
+                    </div>
+                    <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
+                      <p className="text-[10px] uppercase text-slate-400">Used</p>
+                      <p className="font-medium text-slate-700">{item.usage?.used_listings ?? 0}</p>
+                    </div>
+                    <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
+                      <p className="text-[10px] uppercase text-slate-400">Remaining</p>
+                      <p className="font-medium text-slate-700">{item.usage?.remaining_listings ?? 0}</p>
+                    </div>
+                    <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
+                      <p className="text-[10px] uppercase text-slate-400">Requested</p>
+                      <p className="font-medium text-slate-700 text-[11px]">{formatDate(item.requested_at)}</p>
+                    </div>
+                    <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
+                      <p className="text-[10px] uppercase text-slate-400">Payment</p>
+                      <p className="font-medium text-slate-700 text-[11px] truncate">
+                        {item.latest_payment ? `${item.latest_payment.status}` : "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Reject Panel */}
+                  {isRejectingThis && (
+                    <div className="mt-2 rounded-xl border border-red-200 bg-red-50/60 p-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <textarea
+                          value={subscriptionRejectReason}
+                          onChange={(e) => setSubscriptionRejectReason(e.target.value)}
+                          placeholder="Reason for rejection..."
+                          className="flex-1 min-h-[40px] rounded-lg border border-slate-300 bg-white p-2 text-sm outline-none focus:border-red-400 resize-none"
+                          rows={1}
+                        />
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            className="bg-red-600 text-xs py-1 px-3 h-8"
+                            onClick={() =>
+                              rejectSubscriptionMutation.mutate({
+                                subscriptionId: item.id,
+                                reason: subscriptionRejectReason.trim() || "Rejected by admin",
+                              })
+                            }
+                            disabled={rejectSubscriptionMutation.isPending}
+                          >
+                            {rejectSubscriptionMutation.isPending ? "..." : "Confirm"}
+                          </Button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSubscriptionRejectingId(null);
+                              setSubscriptionRejectReason("");
+                            }}
+                            className="rounded-lg border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
+                          >
+                            Cancel
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
                 </div>
+              </Card>
+            );
+          })}
+        </div>
 
-                {/* Action Buttons */}
-                <div className="flex w-full shrink-0 flex-row gap-3 lg:w-[180px] lg:flex-col">
-                  <Button
-                    className="flex-1 bg-green-600"
-                    onClick={() => approveSubscriptionMutation.mutate(item.id)}
-                    disabled={
-                      approveSubscriptionMutation.isPending || item.status === "approved"
-                    }
-                  >
-                    {approveSubscriptionMutation.isPending ? "Approving..." : "Approve"}
-                  </Button>
-
-                  {!isRejectingThis && (
-                    <Button
-                      className="flex-1 bg-red-600"
-                      onClick={() => {
-                        setSubscriptionRejectingId(item.id);
-                        setSubscriptionRejectReason("");
-                      }}
-                      disabled={item.status === "rejected"}
-                    >
-                      Reject
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+        {/* Pagination Controls */}
+        {subscriptionRequests.length > 10 && (
+          <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
+            <p className="text-sm text-slate-500">
+              Showing {subscriptionRequests.length} requests
+            </p>
+            <div className="flex gap-2">
+              <button
+                className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                disabled
+              >
+                Previous
+              </button>
+              <button className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white">1</button>
+              <button className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+      </>
     )}
 
-    {/* Payment History Section */}
+    {/* Payment History Section - Compact */}
     <div className="mt-10">
-      <h2 className="text-2xl font-semibold text-slate-900">Payment History</h2>
-      <p className="mt-1 text-sm text-slate-600">
-        Review all recorded subscription payments.
-      </p>
+      <h2 className="text-xl font-semibold text-slate-900">Payment History</h2>
+      <p className="mt-1 text-sm text-slate-600">Review all recorded subscription payments.</p>
     </div>
 
     <div className="mt-4">
@@ -3539,44 +3483,50 @@ export default function AdminModerationPage() {
         <p className="text-slate-600">Loading payment history...</p>
       ) : subscriptionPayments.length === 0 ? (
         <Card>
-          <div className="py-10 text-center">
-            <h3 className="text-xl font-semibold text-slate-900">No payments found</h3>
-            <p className="mt-2 text-slate-600">Subscription payments will appear here.</p>
+          <div className="py-8 text-center">
+            <h3 className="text-lg font-semibold text-slate-900">No payments found</h3>
+            <p className="mt-1 text-sm text-slate-600">Subscription payments will appear here.</p>
           </div>
         </Card>
       ) : (
-        <Card>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead>
-                <tr className="bg-slate-50 text-left">
-                  <th className="px-4 py-3 text-sm font-semibold text-slate-700">Payment ID</th>
-                  <th className="px-4 py-3 text-sm font-semibold text-slate-700">Subscription</th>
-                  <th className="px-4 py-3 text-sm font-semibold text-slate-700">Amount</th>
-                  <th className="px-4 py-3 text-sm font-semibold text-slate-700">Status</th>
-                  <th className="px-4 py-3 text-sm font-semibold text-slate-700">Method</th>
-                  <th className="px-4 py-3 text-sm font-semibold text-slate-700">Transaction ID</th>
-                  <th className="px-4 py-3 text-sm font-semibold text-slate-700">Paid At</th>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200 text-sm">
+            <thead className="bg-slate-50">
+              <tr className="text-left text-xs font-semibold uppercase text-slate-500">
+                <th className="px-4 py-2">ID</th>
+                <th className="px-4 py-2">Subscription</th>
+                <th className="px-4 py-2">Amount</th>
+                <th className="px-4 py-2">Status</th>
+                <th className="px-4 py-2 hidden sm:table-cell">Method</th>
+                <th className="px-4 py-2 hidden md:table-cell">Transaction</th>
+                <th className="px-4 py-2">Paid At</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {subscriptionPayments.slice(0, 10).map((payment) => (
+                <tr key={payment.id} className="hover:bg-slate-50 transition">
+                  <td className="px-4 py-2 text-slate-700">{payment.id}</td>
+                  <td className="px-4 py-2 text-slate-700">{payment.subscription}</td>
+                  <td className="px-4 py-2 font-medium text-slate-900">
+                    {payment.currency} {formatNumber(payment.amount)}
+                  </td>
+                  <td className="px-4 py-2">
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                      payment.status === "successful" ? "bg-green-100 text-green-700" :
+                      payment.status === "pending" ? "bg-amber-100 text-amber-700" :
+                      "bg-red-100 text-red-700"
+                    }`}>
+                      {payment.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2 text-slate-600 hidden sm:table-cell">{payment.payment_method || "-"}</td>
+                  <td className="px-4 py-2 text-slate-600 hidden md:table-cell text-xs">{payment.transaction_id || "-"}</td>
+                  <td className="px-4 py-2 text-slate-600 text-xs">{formatDate(payment.paid_at || undefined)}</td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {subscriptionPayments.map((payment) => (
-                  <tr key={payment.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-4 text-sm text-slate-700">{payment.id}</td>
-                    <td className="px-4 py-4 text-sm text-slate-700">{payment.subscription}</td>
-                    <td className="px-4 py-4 text-sm font-medium text-slate-900">
-                      {payment.currency} {formatNumber(payment.amount)}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-slate-700">{payment.status}</td>
-                    <td className="px-4 py-4 text-sm text-slate-700">{payment.payment_method || "-"}</td>
-                    <td className="px-4 py-4 text-sm text-slate-700">{payment.transaction_id || "-"}</td>
-                    <td className="px-4 py-4 text-sm text-slate-700">{formatDate(payment.paid_at || undefined)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   </>
