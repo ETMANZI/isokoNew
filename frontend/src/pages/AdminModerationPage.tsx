@@ -3238,10 +3238,19 @@ export default function AdminModerationPage() {
 {activeTab === "subscriptions" && (
   <>
     <div className="mb-6">
-      <h2 className="text-2xl font-semibold text-slate-900">Subscription Requests</h2>
-      <p className="mt-1 text-sm text-slate-600">
-        Review subscription requests, approve or reject them, and monitor payment history.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-2xl font-semibold text-slate-900">Subscription Requests</h2>
+          <p className="mt-1 text-sm text-slate-600">
+            Review subscription requests, approve or reject them, and monitor payment history.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-slate-500">
+          <span className="rounded-full bg-slate-100 px-3 py-1 font-medium">
+            {subscriptionRequests.length} requests
+          </span>
+        </div>
+      </div>
     </div>
 
     {subscriptionActionError && (
@@ -3257,17 +3266,34 @@ export default function AdminModerationPage() {
     )}
 
     {isLoadingSubscriptionRequests ? (
-      <p className="text-slate-600">Loading subscription requests...</p>
+      <div className="space-y-3">
+        {[...Array(3)].map((_, i) => (
+          <Card key={i} className="p-4 animate-pulse">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="h-6 w-32 rounded bg-slate-200" />
+              <div className="h-6 w-20 rounded bg-slate-200" />
+            </div>
+            <div className="mt-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+              {[...Array(6)].map((_, j) => (
+                <div key={j} className="h-12 rounded-lg bg-slate-200" />
+              ))}
+            </div>
+          </Card>
+        ))}
+      </div>
     ) : subscriptionRequests.length === 0 ? (
       <Card>
-        <div className="py-10 text-center">
+        <div className="py-12 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-3xl">
+            📭
+          </div>
           <h3 className="text-xl font-semibold text-slate-900">No subscription requests found</h3>
           <p className="mt-2 text-slate-600">All requests will appear here once users subscribe.</p>
         </div>
       </Card>
     ) : (
       <>
-        {/* Compact List */}
+        {/* Compact Request List */}
         <div className="space-y-3">
           {subscriptionRequests.map((item) => {
             const isRejectingThis = subscriptionRejectingId === item.id;
@@ -3280,13 +3306,13 @@ export default function AdminModerationPage() {
                 <div className="flex flex-col gap-3">
                   {/* Row 1: User + Plan + Status + Actions */}
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    {/* User Info - Compact */}
+                    {/* User Info */}
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="min-w-0">
                         <p className="font-semibold text-slate-900 truncate">
                           {item.user_name || item.user_email}
                         </p>
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
                           {item.user_phone && (
                             <span className="flex items-center gap-1">
                               📞 {item.user_phone}
@@ -3299,7 +3325,7 @@ export default function AdminModerationPage() {
                       </div>
                     </div>
 
-                    {/* Status & Plan Badges */}
+                    {/* Badges */}
                     <div className="flex flex-wrap items-center gap-2 shrink-0">
                       <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-indigo-100">
                         {item.plan.name}
@@ -3317,34 +3343,39 @@ export default function AdminModerationPage() {
                       </span>
                     </div>
 
-                    {/* Action Buttons - Compact */}
+                    {/* Action Buttons */}
                     <div className="flex items-center gap-2 shrink-0">
-                      <Button
-                        size="sm"
-                        className="bg-green-600 text-xs py-1 px-3 h-8"
+                      <button
                         onClick={() => approveSubscriptionMutation.mutate(item.id)}
                         disabled={approveSubscriptionMutation.isPending || item.status === "approved"}
+                        className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                          item.status === "approved"
+                            ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                            : "bg-emerald-600 text-white hover:bg-emerald-700"
+                        }`}
                       >
                         {approveSubscriptionMutation.isPending ? "..." : "Approve"}
-                      </Button>
+                      </button>
                       {!isRejectingThis && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-red-600 border-red-200 hover:bg-red-50 text-xs py-1 px-3 h-8"
+                        <button
                           onClick={() => {
                             setSubscriptionRejectingId(item.id);
                             setSubscriptionRejectReason("");
                           }}
                           disabled={item.status === "rejected"}
+                          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                            item.status === "rejected"
+                              ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                              : "border border-red-200 text-red-600 hover:bg-red-50"
+                          }`}
                         >
                           Reject
-                        </Button>
+                        </button>
                       )}
                     </div>
                   </div>
 
-                  {/* Row 2: Contact Buttons - Compact */}
+                  {/* Row 2: Contact Buttons */}
                   <div className="flex flex-wrap items-center gap-2">
                     {item.user_phone && (
                       <>
@@ -3374,7 +3405,7 @@ export default function AdminModerationPage() {
                     </a>
                   </div>
 
-                  {/* Row 3: Stats Grid - Compact */}
+                  {/* Row 3: Stats Grid */}
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 text-xs">
                     <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
                       <p className="text-[10px] uppercase text-slate-400">Price</p>
@@ -3399,7 +3430,7 @@ export default function AdminModerationPage() {
                     <div className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-1.5">
                       <p className="text-[10px] uppercase text-slate-400">Payment</p>
                       <p className="font-medium text-slate-700 text-[11px] truncate">
-                        {item.latest_payment ? `${item.latest_payment.status}` : "N/A"}
+                        {item.latest_payment ? item.latest_payment.status : "N/A"}
                       </p>
                     </div>
                   </div>
@@ -3416,9 +3447,8 @@ export default function AdminModerationPage() {
                           rows={1}
                         />
                         <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            className="bg-red-600 text-xs py-1 px-3 h-8"
+                          <button
+                            className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 transition"
                             onClick={() =>
                               rejectSubscriptionMutation.mutate({
                                 subscriptionId: item.id,
@@ -3428,14 +3458,13 @@ export default function AdminModerationPage() {
                             disabled={rejectSubscriptionMutation.isPending}
                           >
                             {rejectSubscriptionMutation.isPending ? "..." : "Confirm"}
-                          </Button>
+                          </button>
                           <button
-                            type="button"
                             onClick={() => {
                               setSubscriptionRejectingId(null);
                               setSubscriptionRejectReason("");
                             }}
-                            className="rounded-lg border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
+                            className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 transition"
                           >
                             Cancel
                           </button>
@@ -3449,22 +3478,29 @@ export default function AdminModerationPage() {
           })}
         </div>
 
-        {/* Pagination Controls */}
+        {/* Pagination */}
         {subscriptionRequests.length > 10 && (
-          <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4">
             <p className="text-sm text-slate-500">
-              Showing {subscriptionRequests.length} requests
+              Showing <span className="font-medium">1-{Math.min(10, subscriptionRequests.length)}</span> of{' '}
+              <span className="font-medium">{subscriptionRequests.length}</span> requests
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-1">
               <button
-                className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition"
                 disabled
               >
-                Previous
+                ← Prev
               </button>
-              <button className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white">1</button>
-              <button className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                Next
+              <button className="rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white">1</button>
+              <button className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">
+                2
+              </button>
+              <button className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">
+                3
+              </button>
+              <button className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">
+                Next →
               </button>
             </div>
           </div>
@@ -3474,8 +3510,15 @@ export default function AdminModerationPage() {
 
     {/* Payment History Section - Compact */}
     <div className="mt-10">
-      <h2 className="text-xl font-semibold text-slate-900">Payment History</h2>
-      <p className="mt-1 text-sm text-slate-600">Review all recorded subscription payments.</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-semibold text-slate-900">Payment History</h2>
+          <p className="mt-1 text-sm text-slate-600">Review all recorded subscription payments.</p>
+        </div>
+        <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600">
+          {subscriptionPayments.length} payments
+        </span>
+      </div>
     </div>
 
     <div className="mt-4">
@@ -3484,33 +3527,36 @@ export default function AdminModerationPage() {
       ) : subscriptionPayments.length === 0 ? (
         <Card>
           <div className="py-8 text-center">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-2xl">
+              💳
+            </div>
             <h3 className="text-lg font-semibold text-slate-900">No payments found</h3>
             <p className="mt-1 text-sm text-slate-600">Subscription payments will appear here.</p>
           </div>
         </Card>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-xl border border-slate-200">
           <table className="min-w-full divide-y divide-slate-200 text-sm">
             <thead className="bg-slate-50">
               <tr className="text-left text-xs font-semibold uppercase text-slate-500">
-                <th className="px-4 py-2">ID</th>
-                <th className="px-4 py-2">Subscription</th>
-                <th className="px-4 py-2">Amount</th>
-                <th className="px-4 py-2">Status</th>
-                <th className="px-4 py-2 hidden sm:table-cell">Method</th>
-                <th className="px-4 py-2 hidden md:table-cell">Transaction</th>
-                <th className="px-4 py-2">Paid At</th>
+                <th className="px-4 py-2.5">ID</th>
+                <th className="px-4 py-2.5">Subscription</th>
+                <th className="px-4 py-2.5">Amount</th>
+                <th className="px-4 py-2.5">Status</th>
+                <th className="px-4 py-2.5 hidden sm:table-cell">Method</th>
+                <th className="px-4 py-2.5 hidden md:table-cell">Transaction</th>
+                <th className="px-4 py-2.5">Paid At</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {subscriptionPayments.slice(0, 10).map((payment) => (
                 <tr key={payment.id} className="hover:bg-slate-50 transition">
-                  <td className="px-4 py-2 text-slate-700">{payment.id}</td>
-                  <td className="px-4 py-2 text-slate-700">{payment.subscription}</td>
-                  <td className="px-4 py-2 font-medium text-slate-900">
+                  <td className="px-4 py-2.5 text-slate-700 font-mono text-xs">{payment.id}</td>
+                  <td className="px-4 py-2.5 text-slate-700">#{payment.subscription}</td>
+                  <td className="px-4 py-2.5 font-medium text-slate-900">
                     {payment.currency} {formatNumber(payment.amount)}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2.5">
                     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                       payment.status === "successful" ? "bg-green-100 text-green-700" :
                       payment.status === "pending" ? "bg-amber-100 text-amber-700" :
@@ -3519,13 +3565,22 @@ export default function AdminModerationPage() {
                       {payment.status}
                     </span>
                   </td>
-                  <td className="px-4 py-2 text-slate-600 hidden sm:table-cell">{payment.payment_method || "-"}</td>
-                  <td className="px-4 py-2 text-slate-600 hidden md:table-cell text-xs">{payment.transaction_id || "-"}</td>
-                  <td className="px-4 py-2 text-slate-600 text-xs">{formatDate(payment.paid_at || undefined)}</td>
+                  <td className="px-4 py-2.5 text-slate-600 hidden sm:table-cell">{payment.payment_method || "—"}</td>
+                  <td className="px-4 py-2.5 text-slate-600 hidden md:table-cell font-mono text-xs truncate max-w-[100px]">
+                    {payment.transaction_id || "—"}
+                  </td>
+                  <td className="px-4 py-2.5 text-slate-600 text-xs whitespace-nowrap">
+                    {formatDate(payment.paid_at || undefined)}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          {subscriptionPayments.length > 10 && (
+            <div className="border-t border-slate-200 px-4 py-3 text-center text-sm text-slate-500">
+              Showing 1-10 of {subscriptionPayments.length} payments
+            </div>
+          )}
         </div>
       )}
     </div>
