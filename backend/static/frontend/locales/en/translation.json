@@ -950,7 +950,10 @@
     "subscription_screenshot_hint": "Subscription plans screenshot will appear here",
     "call_now":"Call Now",
     "whatsapp":"WhatsApp",
-    
+    "need_help":"Need Help?",
+    "print_guide":"Print Guide",
+    "download_pdf":"Download PDF",
+
     "getting_started": {
       "title": "Getting Started",
       "welcome": "Welcome to Market Hub!",
