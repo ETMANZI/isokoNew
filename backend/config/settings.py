@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
-import dj_database_url  # ✅ ADD THIS
+import dj_database_url
 
 # Load environment variables
 load_dotenv()
@@ -102,7 +102,10 @@ GEOIP_PATH = BASE_DIR / "geoip"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [
+            BASE_DIR / "templates",
+            BASE_DIR.parent / "frontend" / "dist",  # React frontend build
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -115,7 +118,7 @@ TEMPLATES = [
 ]
 
 # ============================================
-# DATABASE CONFIGURATION - FIXED ✅
+# DATABASE CONFIGURATION
 # ============================================
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
@@ -178,9 +181,19 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# Add frontend dist to STATICFILES_DIRS
 STATICFILES_DIRS = []
 if (BASE_DIR / "static").exists():
-    STATICFILES_DIRS = [BASE_DIR / "static"]
+    STATICFILES_DIRS.append(BASE_DIR / "static")
+
+# Add React frontend build directory
+FRONTEND_DIST = BASE_DIR.parent / "frontend" / "dist"
+if FRONTEND_DIST.exists():
+    STATICFILES_DIRS.append(FRONTEND_DIST)
+else:
+    # Create directory if it doesn't exist
+    FRONTEND_DIST.mkdir(parents=True, exist_ok=True)
+    STATICFILES_DIRS.append(FRONTEND_DIST)
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -243,6 +256,7 @@ if not IS_RUNSERVER:
         "https://*.railway.app",
         "https://isokoryawe.rw",
         "https://www.isokoryawe.rw",
+        "https://isokoryawe.herokuapp.com",
     ])
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
