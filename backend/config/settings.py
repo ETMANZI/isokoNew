@@ -11,10 +11,6 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ============================================
-# DJANGO CORE SETTINGS
-# ============================================
-
 IS_RUNSERVER = 'runserver' in sys.argv
 
 if IS_RUNSERVER:
@@ -29,7 +25,6 @@ if IS_RUNSERVER:
     ]
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key-change-in-production")
 else:
-    # Production settings
     DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
     ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
     ALLOWED_HOSTS = [h.strip() for h in ALLOWED_HOSTS if h.strip()]
@@ -53,10 +48,6 @@ else:
     SECRET_KEY = os.environ.get("SECRET_KEY")
     if not SECRET_KEY:
         raise ValueError("SECRET_KEY environment variable must be set in production!")
-
-# ============================================
-# INSTALLED APPS
-# ============================================
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -117,9 +108,6 @@ TEMPLATES = [
     },
 ]
 
-# ============================================
-# DATABASE CONFIGURATION
-# ============================================
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL:
@@ -141,10 +129,6 @@ else:
 
 AUTH_USER_MODEL = "accounts.User"
 
-# ============================================
-# REST FRAMEWORK
-# ============================================
-
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -165,23 +149,14 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
 
-# ============================================
-# INTERNATIONALIZATION
-# ============================================
-
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Africa/Kigali"
 USE_I18N = True
 USE_TZ = True
 
-# ============================================
-# STATIC & MEDIA FILES
-# ============================================
-
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Add frontend dist to STATICFILES_DIRS
 STATICFILES_DIRS = []
 if (BASE_DIR / "static").exists():
     STATICFILES_DIRS.append(BASE_DIR / "static")
@@ -199,15 +174,15 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
-# ============================================
-# STORAGE (Cloudinary or Local)
-# ============================================
-
 USE_CLOUDINARY = (
     os.environ.get('CLOUDINARY_CLOUD_NAME') and
     os.environ.get('CLOUDINARY_API_KEY') and
     os.environ.get('CLOUDINARY_API_SECRET')
 )
+
+CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
+USE_CLOUDINARY = bool(CLOUDINARY_URL)
+
 
 if USE_CLOUDINARY and not IS_RUNSERVER:
     import cloudinary
@@ -240,10 +215,6 @@ else:
     }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# ============================================
-# CORS CONFIGURATION
-# ============================================
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
@@ -284,10 +255,6 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-# ============================================
-# EMAIL CONFIGURATION
-# ============================================
-
 if IS_RUNSERVER:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:
@@ -299,20 +266,12 @@ else:
     EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
     DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "noreply@markethub.com")
 
-# ============================================
-# AUTHENTICATION
-# ============================================
-
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-
-# ============================================
-# SECURITY (Production only)
-# ============================================
 
 if not IS_RUNSERVER and not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -331,17 +290,9 @@ else:
     CSRF_COOKIE_SECURE = False
     SECURE_HSTS_SECONDS = 0
 
-# ============================================
-# FILE UPLOAD SETTINGS
-# ============================================
-
 DATA_UPLOAD_MAX_MEMORY_SIZE = 110 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 110 * 1024 * 1024
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
-
-# ============================================
-# LOGGING (Development only)
-# ============================================
 
 if IS_RUNSERVER:
     LOGGING = {
