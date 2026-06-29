@@ -16,7 +16,7 @@ IS_RUNSERVER = 'runserver' in sys.argv
 if IS_RUNSERVER:
     os.environ['DEBUG'] = 'True'
     DEBUG = True
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'isokoryawe.rw', 'www.isokoryawe.rw']
     CSRF_TRUSTED_ORIGINS = [
         'http://localhost:5173',
         'http://localhost:3000',
