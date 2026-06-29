@@ -22,6 +22,8 @@ if IS_RUNSERVER:
         'http://localhost:3000',
         'http://localhost:8000',
         'http://127.0.0.1:8000',
+        'http://isokoryawe.rw',
+        'http://www.isokoryawe.rw',
     ]
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key-change-in-production")
 else:
